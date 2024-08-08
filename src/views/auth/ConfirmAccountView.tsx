@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PinInput, PinInputField } from '@chakra-ui/pin-input'
 import { useMutation } from '@tanstack/react-query'
 import { ConfirmToken } from "@/types/index";
@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 
 export default function ConfirmAccountView() {
     const [token, setToken] = useState<ConfirmToken['token']>('')
-    let confirmation = false;
 
     const { mutate } = useMutation({
         mutationFn: confirmAccount,
