@@ -15,6 +15,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import { userStatus } from "@/types/index";
 import EditIcon from "@mui/icons-material/Edit";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import Typography from "@mui/material/Typography";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,13 +37,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const editIcon = (status?: boolean) => (
+  <IconButton aria-label="delete" color="success" disabled={status}>
+    <EditIcon />
+  </IconButton>
+);
 
-const editIcon = (status?: boolean ) => (
-    <IconButton aria-label="delete" color="success" disabled={status}>
-      <EditIcon />
-    </IconButton>
-  );
-  
 const activeIcon = (
   <IconButton aria-label="delete" color="success">
     <CheckCircleIcon />
@@ -74,35 +74,53 @@ export default function UsersTable() {
     retry: false,
   });
 
-  if (isLoading) return "Cargando...";
+  if (isLoading) {
+    return (
+      <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
+        Cargando...
+      </Typography>
+    );
+  }
   if (isError) return <Navigate to={"/404"} />;
-  return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>ID</StyledTableCell>
-            <StyledTableCell align="right">Nombre</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right"></StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data?.map((user) => (
-            <StyledTableRow key={user._id}>
-              <StyledTableCell component="th" scope="row">
-                {user._id}
-              </StyledTableCell>
-              <StyledTableCell align="right">{user.name}</StyledTableCell>
-              <StyledTableCell align="right">{user.email}</StyledTableCell>
-              <StyledTableCell align="right">
-                {user.status == userStatus.inactive ? editIcon(true) : editIcon(false)}
-                {statusIcons[user.status]}
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+  if (data) {
+    return (
+      <div className={"p-4"}>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>ID</StyledTableCell>
+                <StyledTableCell align="right">Nombre</StyledTableCell>
+                <StyledTableCell align="right">Email</StyledTableCell>
+                <StyledTableCell align="right"></StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data?.map((user) => (
+                <StyledTableRow key={user._id}>
+                  <StyledTableCell component="th" scope="row">
+                    {user._id}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">{user.name}</StyledTableCell>
+                  <StyledTableCell align="right">{user.email}</StyledTableCell>
+                  <StyledTableCell align="right">
+                    {user.status == userStatus.inactive
+                      ? editIcon(true)
+                      : editIcon(false)}
+                    {statusIcons[user.status]}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
+  } else {
+    return (
+      <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
+        No hay usuarios registrados
+      </Typography>
+    );
+  }
 }

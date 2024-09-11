@@ -15,6 +15,8 @@ const authSchema = z.object({
   current_password: z.string(),
   password: z.string(),
   password_confirmation: z.string(),
+  last_name: z.string(),
+  ci: z.string(),
   token: z.string(),
 });
 
@@ -23,6 +25,10 @@ export type UserLoginForm = Pick<Auth, "email" | "password">;
 export type UserRegistrationForm = Pick<
   Auth,
   "name" | "email" | "password" | "password_confirmation"
+>;
+export type UserRegistrationFormEnhanced = Pick<
+  Auth,
+  "name" | "email" | "last_name" | "ci"
 >;
 export type RequestConfirmationCodeForm = Pick<Auth, "email">;
 export type ForgotPasswordForm = Pick<Auth, "email">;
