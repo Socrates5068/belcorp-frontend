@@ -45,6 +45,8 @@ export const userSchema = authSchema
   .pick({
     name: true,
     email: true,
+    ci: true,
+    last_name: true,
   })
   .extend({
     _id: z.string(),
