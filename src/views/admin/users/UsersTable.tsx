@@ -89,8 +89,9 @@ export default function UsersTable() {
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>ID</StyledTableCell>
-                <StyledTableCell align="right">Nombre</StyledTableCell>
+                <StyledTableCell>C.I.</StyledTableCell>
+                <StyledTableCell align="right">Nombres</StyledTableCell>
+                <StyledTableCell align="right">Apellidos</StyledTableCell>
                 <StyledTableCell align="right">Email</StyledTableCell>
                 <StyledTableCell align="right"></StyledTableCell>
               </TableRow>
@@ -99,9 +100,10 @@ export default function UsersTable() {
               {data?.map((user) => (
                 <StyledTableRow key={user._id}>
                   <StyledTableCell component="th" scope="row">
-                    {user._id}
+                    {user.ci}
                   </StyledTableCell>
                   <StyledTableCell align="right">{user.name}</StyledTableCell>
+                  <StyledTableCell align="right">{user.last_name}</StyledTableCell>
                   <StyledTableCell align="right">{user.email}</StyledTableCell>
                   <StyledTableCell align="right">
                     {user.status == userStatus.inactive
