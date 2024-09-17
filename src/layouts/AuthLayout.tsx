@@ -3,20 +3,23 @@ import { Outlet } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 
 export default function AuthLayout() {
-  return (
-    <>
+    return (
+      <>
         <div className='min-h-screen bg-gray-800'>
-            <div className='py-10 lg:py-20 mx-auto w-[450px]'>
-                <Logo />
-                <div className='mt-10'>
-                    <Outlet />
-                </div>
+          <div className='py-8 mx-auto w-[450px]'>
+            <div className='flex justify-center'>
+              <Logo width={320} />
             </div>
+            <div className='mt-5'>
+              <Outlet />
+            </div>
+          </div>
         </div>
         <ToastContainer
-            pauseOnHover={false}
-            pauseOnFocusLoss={false}
+          pauseOnHover={false}
+          pauseOnFocusLoss={false}
         />
-    </>
-  )
-}
+      </>
+    )
+  }
+  

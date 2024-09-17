@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const userStatus = {
-    active: "Active",
-    inactive: "Inactive",
-    pending: "Pending",
-    banned: "Banned",
-}
+  active: "Active",
+  inactive: "Inactive",
+  pending: "Pending",
+  banned: "Banned",
+};
 export const userStatusEnum = z.nativeEnum(userStatus);
 
 /** Auth & Users */
@@ -30,6 +30,7 @@ export type UserRegistrationFormEnhanced = Pick<
   Auth,
   "name" | "email" | "last_name" | "ci"
 >;
+
 export type RequestConfirmationCodeForm = Pick<Auth, "email">;
 export type ForgotPasswordForm = Pick<Auth, "email">;
 export type NewPasswordForm = Pick<Auth, "password" | "password_confirmation">;
@@ -52,8 +53,23 @@ export const userSchema = authSchema
     _id: z.string(),
     status: userStatusEnum,
   });
+
+/** Users */
+export const editUser = authSchema.pick({
+  name: true,
+  email: true,
+  ci: true,
+  last_name: true,
+});
 export const users = z.array(userSchema);
 export type User = z.infer<typeof userSchema>;
+export type UpdateUserForm = Pick<
+  User,
+  "name" | "email" | "last_name" | "ci"
+> & {
+  _id: string | null;
+};
+export type UpdateUserStatusForm = Pick<User, "_id" | "status">;
 export type UserProfileForm = Pick<User, "name" | "email">;
 
 /** Notes */
