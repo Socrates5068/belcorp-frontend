@@ -9,18 +9,16 @@ import ConfirmAccountView from "./views/auth/ConfirmAccountView";
 import RequestNewCodeView from "./views/auth/RequestNewCodeView";
 import ForgotPasswordView from "./views/auth/ForgotPasswordView";
 import NewPasswordView from "./views/auth/NewPasswordView";
-import ProjectTeamView from "./views/projects/ProjectTeamView";
-import ProfileView from "./views/profile/ProfileView";
-import ChangePasswordView from "./views/profile/ChangePasswordView";
-import ProfileLayout from "./layouts/ProfileLayout";
 import NotFound from "./views/404/NotFound";
 import AdminLayout from "./layouts/AdminLayout";
 import UserView from "./views/admin/users/UserView";
+import DashboardView from "./views/DashboardView";
 
 export default function Router() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<DashboardView />} index />
         <Route element={<AdminLayout />}>
           <Route path="/dashboard" element={<UserView />} index />
           <Route path="/projects/create" element={<CreateProjectView />} />
@@ -29,14 +27,6 @@ export default function Router() {
             path="/projects/:projectId/edit"
             element={<EditProjectView />}
           />
-          <Route
-            path="/projects/:projectId/team"
-            element={<ProjectTeamView />}
-          />
-          <Route element={<ProfileLayout />}>
-            <Route path="/profile" element={<ProfileView />} />
-            <Route path="/profile/password" element={<ChangePasswordView />} />
-          </Route>
         </Route>
 
         <Route element={<AuthLayout />}>

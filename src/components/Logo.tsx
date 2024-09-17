@@ -1,5 +1,16 @@
-export default function Logo() {
+import Box from "@mui/material/Box";
+
+interface LogoProps {
+  width?: number | string;
+}
+
+export default function Logo({ width = 100 }: LogoProps) {
   return (
-    <img src="/R.png" alt="Logotipo UpTask" />
-  )
+    <Box
+      component="img"
+      src="/R.png"
+      alt="Logo"
+      sx={{ width: width }}
+    />
+  );
 }
