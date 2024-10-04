@@ -50,24 +50,12 @@ export default function UserView() {
         sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
       >
         <Toolbar>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item>
-              <SearchIcon color="inherit" sx={{ display: "block" }} />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                fullWidth
-                placeholder="Search by email address, phone number, or user UID"
-                InputProps={{
-                  disableUnderline: true,
-                  sx: { fontSize: "default" },
-                }}
-                variant="standard"
-              />
-            </Grid>
+          <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
+
             <Grid item>
               <Button
                 variant="contained"
+                color="primary"
                 sx={{ mr: 1 }}
                 onClick={handleClickOpen}
               >
@@ -78,11 +66,6 @@ export default function UserView() {
                 handleClose={handleClose}
                 handleRegister={handleRegister}
               />
-              <Tooltip title="Reload">
-                <IconButton>
-                  <RefreshIcon color="inherit" sx={{ display: "block" }} />
-                </IconButton>
-              </Tooltip>
             </Grid>
           </Grid>
         </Toolbar>

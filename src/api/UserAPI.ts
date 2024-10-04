@@ -42,7 +42,6 @@ export async function getUserById(id: string | null) {
 }
 
 export async function updateUser(formData: UpdateUserForm) {
-  console.log("🚀 ~ updateUser ~ formData:", formData)
   try {
     const url = `/users/${formData._id}`;
     const { data } = await api.put<string>(url, formData);
