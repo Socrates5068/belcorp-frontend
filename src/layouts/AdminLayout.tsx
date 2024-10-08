@@ -2,12 +2,12 @@ import * as React from "react";
 import { AppProvider, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { ToastContainer } from "react-toastify";
-import AppNavigation from "./admin/adminNavigation";
 import AppTheme from "./admin/AdminTheme";
 import "react-toastify/dist/ReactToastify.css";
 import { PageContent } from "./admin/PageContent";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import AdminNavigation from "./admin/AdminNavigation";
 
 export default function AdminLayout() {
   const [pathname, setPathname] = React.useState("/usuarios");
@@ -24,13 +24,18 @@ export default function AdminLayout() {
     };
   }, [pathname, navigate]);
 
-  const navigation = AppNavigation();
+  const navigation = AdminNavigation();
 
   const { data, isError, isLoading } = useAuth();
+
   if (isLoading) return "Cargando...";
+
   if (isError) {
-    console.log("🚀 ~ AdminLayout ~ isError:", isError)
     return <Navigate to="/auth/login" />;
+  }
+
+  if (data && !data.roles.includes("Gerente")) {
+    return <Navigate to="/no-access" />;
   }
 
   if (data)

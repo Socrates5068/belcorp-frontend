@@ -18,6 +18,8 @@ const authSchema = z.object({
   last_name: z.string(),
   ci: z.string(),
   token: z.string(),
+  section: z.string(),
+  roles: z.array(z.string())
 });
 
 type Auth = z.infer<typeof authSchema>;
@@ -28,7 +30,7 @@ export type UserRegistrationForm = Pick<
 >;
 export type UserRegistrationFormEnhanced = Pick<
   Auth,
-  "name" | "email" | "last_name" | "ci"
+  "name" | "email" | "last_name" | "ci" | "roles" | "section"
 >;
 
 export type RequestConfirmationCodeForm = Pick<Auth, "email">;
@@ -40,6 +42,27 @@ export type UpdateCurrentUserPasswordForm = Pick<
 >;
 export type ConfirmToken = Pick<Auth, "token">;
 export type CheckPasswordForm = Pick<Auth, "password">;
+
+export const isAdminSchema = z.object({
+  roles: z.array(z.string()),
+});
+
+/** Sections */
+export const sectionSchema = z.object({
+  name: z.string(),
+  _id: z.string(),
+});
+
+export const sections = z.array(sectionSchema);
+export const editSection = sectionSchema.pick({
+  name: true,
+});
+type Section = z.infer<typeof sectionSchema>;
+export type UpdateSectionForm = Pick<Section, "name"> & {
+  _id: string | null;
+};
+
+export type SectionRegistrationForm = Pick<Section, "name">;
 
 /** Users */
 export const userSchema = authSchema
@@ -54,7 +77,6 @@ export const userSchema = authSchema
     status: userStatusEnum,
   });
 
-/** Users */
 export const editUser = authSchema.pick({
   name: true,
   email: true,

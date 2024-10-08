@@ -4,6 +4,7 @@ import {
   CheckPasswordForm,
   ConfirmToken,
   ForgotPasswordForm,
+  isAdminSchema,
   NewPasswordForm,
   RequestConfirmationCodeForm,
   UserLoginForm,
@@ -122,11 +123,8 @@ export async function updatePasswordWithToken({
 export async function getUser() {
   try {
     const { data } = await api("/auth/user");
-    console.log("🚀 ~ getUser ~ data:", data);
     const response = userSchema.safeParse(data);
-    console.log("🚀 ~ getUser ~ response:", response);
     if (response.success) {
-      console.log("🚀 ~ getUser ~ response.data:", response.data);
       return response.data;
     } else {
       console.error("Validation failed:", response.error);
@@ -143,6 +141,22 @@ export async function checkPassword(formData: CheckPasswordForm) {
     const url = "/auth/check-password";
     const { data } = await api.post<string>(url, formData);
     return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+export async function getRoles() {
+  try {
+    const { data } = await api("/auth/user");
+    const response = isAdminSchema.safeParse(data);
+    if (response.success) {
+      return response.data;
+    } else {
+      console.error("Validation failed:", response.error);
+    }
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);

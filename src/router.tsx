@@ -7,6 +7,7 @@ import NotFound from "./views/404/NotFound";
 import AdminLayout from "./layouts/AdminLayout";
 import UserView from "./views/admin/users/UserView";
 import DashboardView from "./views/DashboardView";
+import NoAccess from "./views/404/NoAccess";
 
 export default function Router() {
   return (
@@ -29,6 +30,7 @@ export default function Router() {
         <Route element={<AuthLayout />}>
           <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="/no-access" element={<NoAccess />} />
       </Routes>
     </BrowserRouter>
   );
