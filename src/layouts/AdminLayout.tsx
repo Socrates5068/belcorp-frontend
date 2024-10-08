@@ -34,9 +34,9 @@ export default function AdminLayout() {
     return <Navigate to="/auth/login" />;
   }
 
-  if (data && !data.roles.includes("Gerente")) {
+  /* if (data && !data.roles.includes("Gerente")) {
     return <Navigate to="/no-access" />;
-  }
+  } */
 
   if (data)
     return (
