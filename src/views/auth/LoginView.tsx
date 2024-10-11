@@ -1,37 +1,43 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from '@tanstack/react-query'
+import { useMutation } from "@tanstack/react-query";
 import { UserLoginForm } from "@/types/index";
 import ErrorMessage from "@/components/ErrorMessage";
 import { authenticateUser } from "@/api/AuthAPI";
 import { toast } from "react-toastify";
 
 export default function LoginView() {
-
   const initialValues: UserLoginForm = {
-    email: '',
-    password: '',
-  }
-  const { register, handleSubmit, formState: { errors } } = useForm({ defaultValues: initialValues })
-  const navigate = useNavigate()
+    ci: "",
+    password: "",
+  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: initialValues });
+  const navigate = useNavigate();
 
   const { mutate } = useMutation({
     mutationFn: authenticateUser,
     onError: (error) => {
-      toast.error(error.message)
+      toast.error(error.message);
     },
     onSuccess: () => {
-      navigate('/dashboard')
-    }
-  })
+      navigate("/dashboard");
+    },
+  });
 
-  const handleLogin = (formData: UserLoginForm) => mutate(formData)
+  const handleLogin = (formData: UserLoginForm) => mutate(formData);
 
   return (
     <>
       <h1 className="text-5xl font-black text-white">Iniciar Sesión</h1>
       <p className="mt-5 text-2xl font-light text-white">
-        <span className="font-bold text-fuchsia-500"> iniciando sesión en este formulario</span>
+        <span className="font-bold text-fuchsia-500">
+          {" "}
+          iniciando sesión en este formulario
+        </span>
       </p>
 
       <form
@@ -40,37 +46,31 @@ export default function LoginView() {
         noValidate
       >
         <div className="flex flex-col gap-5">
-          <label
-            htmlFor="email"
-            className="text-2xl font-normal"
-          >Email</label>
+          <label htmlFor="ci" className="text-2xl font-normal">
+            C.I.
+          </label>
 
           <input
-            id="email"
-            type="email"
-            placeholder="Email de Registro"
+            id="ci"
+            type="ci"
+            placeholder="C.I."
             className="w-full p-3 border border-gray-300"
-            {...register("email", {
-              required: "El Email es obligatorio",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "E-mail no válido",
-              },
+            {...register("ci", {
+              required: "El C.I. es obligatorio",
             })}
           />
-          {errors.email && (
-            <ErrorMessage>{errors.email.message}</ErrorMessage>
-          )}
+          {errors.ci && <ErrorMessage>{errors.ci.message}</ErrorMessage>}
         </div>
 
         <div className="flex flex-col gap-5">
-          <label
-            className="text-2xl font-normal"
-          >Password</label>
+          <label htmlFor="password" className="text-2xl font-normal">
+            Password
+          </label>
 
           <input
+            id="password"
             type="password"
-            placeholder="Password de Registro"
+            placeholder="Password"
             className="w-full p-3 border border-gray-300"
             {...register("password", {
               required: "El Password es obligatorio",
@@ -83,7 +83,7 @@ export default function LoginView() {
 
         <input
           type="submit"
-          value='Iniciar Sesión'
+          value="Iniciar Sesión"
           className="w-full p-3 text-xl font-black text-white cursor-pointer bg-fuchsia-600 hover:bg-fuchsia-700"
         />
       </form>
@@ -95,10 +95,12 @@ export default function LoginView() {
         >¿No tienes cuenta? Crear Una</Link>} */}
 
         <Link
-          to={'/auth/forgot-password'}
+          to={"#"}
           className="font-normal text-center text-gray-300"
-        >¿Olvidaste tu contraseña? Reestablecer</Link>
+        >
+          ¿Olvidaste tu contraseña? Contacta con un Administrador para resetear tu contraseña
+        </Link>
       </nav>
     </>
-  )
+  );
 }

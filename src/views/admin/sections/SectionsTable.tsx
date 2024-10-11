@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { getSections, updateSection } from "@/api/SectionAPI";
 import Grid2 from "@mui/material/Grid2";
 import EditSection from "./EditSection";
+import { sections } from "@/hooks/sections";
 
 export default function SectionsTable() {
   const [openEdit, setOpenEdit] = React.useState(false);
@@ -41,11 +42,7 @@ export default function SectionsTable() {
 
   const handleEdit = (data: UpdateSectionForm) => mutateEdit(data);
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["sections"],
-    queryFn: () => getSections(),
-    retry: false,
-  });
+  const { data, isError, isLoading } = sections();
 
   if (isLoading) {
     return (

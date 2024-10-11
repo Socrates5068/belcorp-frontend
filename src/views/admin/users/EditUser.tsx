@@ -6,16 +6,24 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { getUserById } from "@/api/UserAPI";
 import { useQuery } from "@tanstack/react-query";
-import { UpdateUserForm } from "@/types/index";
+import { UpdateUserForm, userRoles } from "@/types/index";
+import { sections } from "@/hooks/sections";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+} from "@mui/material";
 
 interface EditUserProps {
   openEdit: boolean;
   handleClose: () => void;
   handleEdit: (data: UpdateUserForm) => void;
-  userId: string | null; // Ahora puede ser string o null
+  userId: string | null;
 }
 
 const EditUser: React.FC<EditUserProps> = ({
@@ -31,11 +39,13 @@ const EditUser: React.FC<EditUserProps> = ({
   } = useQuery({
     queryKey: ["editUser", userId],
     queryFn: () => getUserById(userId),
-    enabled: !!userId && openEdit, // Ejecuta la consulta solo si userId es válido y el diálogo está abierto
+    enabled: !!userId && openEdit,
     retry: false,
   });
 
+  const { data } = sections();
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -50,6 +60,8 @@ const EditUser: React.FC<EditUserProps> = ({
         name: user.name,
         last_name: user.last_name,
         ci: user.ci,
+        roles: user.roles,
+        section: user.section,
       });
     }
   }, [user, openEdit, reset]);
@@ -57,17 +69,15 @@ const EditUser: React.FC<EditUserProps> = ({
   const onSubmit = (data: UpdateUserForm) => {
     handleEdit({ ...data, _id: userId });
     reset();
-    handleClose(); // Cerrar el modal después de enviar
+    handleClose();
   };
 
-  // Función para manejar el cierre y resetear el formulario
   const handleCancel = () => {
     handleClose();
-    reset(); // Resetear el formulario a los valores iniciales o a vacío
+    reset();
   };
 
-  if (isLoading) return null; // Puedes mostrar un indicador de carga si lo deseas
-
+  if (isLoading) return null;
   if (isError) return "Error al cargar los datos del usuario.";
 
   return (
@@ -139,6 +149,62 @@ const EditUser: React.FC<EditUserProps> = ({
                 error={!!errors.ci}
                 helperText={errors.ci?.message}
               />
+            </Grid>
+
+            {/* Campo de Rol */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required error={!!errors.roles}>
+                <InputLabel id="roles">Roles</InputLabel>
+                <Controller
+                  name="roles"
+                  control={control}
+                  rules={{ required: "Al menos un rol es obligatorio" }}
+                  render={({ field }) => (
+                    <Select
+                      labelId="roles"
+                      label="Roles"
+                      multiple
+                      {...field}
+                      renderValue={(selected) =>
+                        (selected as string[]).join(", ")
+                      }
+                    >
+                      {Object.values(userRoles).map((role) => (
+                        <MenuItem key={role} value={role}>
+                          {role}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.roles && (
+                  <FormHelperText>{errors.roles.message}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            {/* Campo de Sección */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required error={!!errors.section}>
+                <InputLabel id="section">Sección</InputLabel>
+                <Controller
+                  name="section"
+                  control={control}
+                  rules={{ required: "La Sección es obligatoria" }}
+                  render={({ field }) => (
+                    <Select labelId="section" label="Sección" {...field}>
+                      {data?.map((section) => (
+                        <MenuItem key={section._id} value={section._id}>
+                          {section.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.section && (
+                  <FormHelperText>{errors.section.message}</FormHelperText>
+                )}
+              </FormControl>
             </Grid>
           </Grid>
         </form>
