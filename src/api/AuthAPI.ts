@@ -148,7 +148,7 @@ export async function checkPassword(formData: CheckPasswordForm) {
   }
 }
 
-export async function getRoles() {
+export async function getUserRole() {
   try {
     const { data } = await api("/auth/user");
     const response = isAdminSchema.safeParse(data);

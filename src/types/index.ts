@@ -6,7 +6,16 @@ export const userStatus = {
   pending: "Pending",
   banned: "Banned",
 };
+
+export const userRoles = {
+  administrador: "Administrador",
+  gerente: "Gerente",
+  socia: "Socia",
+  consultora: "Consultora",
+};
+
 export const userStatusEnum = z.nativeEnum(userStatus);
+export const userRolesEnum = z.nativeEnum(userRoles);
 
 /** Auth & Users */
 const authSchema = z.object({
@@ -19,11 +28,11 @@ const authSchema = z.object({
   ci: z.string(),
   token: z.string(),
   section: z.string(),
-  roles: z.array(z.string())
+  roles: z.array(z.string()),
 });
 
 type Auth = z.infer<typeof authSchema>;
-export type UserLoginForm = Pick<Auth, "email" | "password">;
+export type UserLoginForm = Pick<Auth, "ci" | "password">;
 export type UserRegistrationForm = Pick<
   Auth,
   "name" | "email" | "password" | "password_confirmation"
@@ -64,6 +73,54 @@ export type UpdateSectionForm = Pick<Section, "name"> & {
 
 export type SectionRegistrationForm = Pick<Section, "name">;
 
+/* Documents */
+const documentSchema = z.object({
+  _id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  createdAt: z.string(),
+  url: z.string(),
+  campaign: z.string(),
+});
+
+const createDocument = documentSchema
+  .pick({
+    title: true,
+    description: true,
+    campaign: true,
+  })
+  .extend({
+    file: z.instanceof(File),
+  });
+
+export const documents = z.array(documentSchema);
+type Document = z.infer<typeof createDocument>;
+export type DocumentRegistrationForm = Pick<
+  Document,
+  "title" | "description" | "file" | "campaign"
+>;
+
+/* Campaigns */
+const campaignSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
+});
+
+const createCampaign = campaignSchema.pick({
+  name: true,
+  startDate: true,
+  endDate: true,
+});
+
+export const campaigns = z.array(campaignSchema);
+type Campaign = z.infer<typeof createCampaign>;
+export type CampaignRegistrationForm = Pick<
+  Campaign,
+  "name" | "startDate" | "endDate"
+>;
+
 /** Users */
 export const userSchema = authSchema
   .pick({
@@ -75,6 +132,7 @@ export const userSchema = authSchema
   .extend({
     _id: z.string(),
     status: userStatusEnum,
+    roles: z.array(userRolesEnum),
   });
 
 export const editUser = authSchema.pick({
@@ -82,12 +140,14 @@ export const editUser = authSchema.pick({
   email: true,
   ci: true,
   last_name: true,
+  roles: true,
+  section: true,
 });
 export const users = z.array(userSchema);
 export type User = z.infer<typeof userSchema>;
 export type UpdateUserForm = Pick<
-  User,
-  "name" | "email" | "last_name" | "ci"
+  Auth,
+  "name" | "email" | "last_name" | "ci" | "roles" | "section"
 > & {
   _id: string | null;
 };

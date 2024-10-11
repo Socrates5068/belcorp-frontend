@@ -10,10 +10,9 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { updateSection } from "@/api/SectionAPI";
 import Grid2 from "@mui/material/Grid2";
-import EditSection from "./EditSection";
-import { useSections } from "@/hooks/sections";
+import { useCampaigns } from "@/hooks/campaigns";
 
-export default function SectionsTable() {
+export default function CampaignsTable() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
     null
@@ -36,13 +35,14 @@ export default function SectionsTable() {
     },
     onSuccess: (data) => {
       toast.success(data);
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
+      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
     },
   });
 
   const handleEdit = (data: UpdateSectionForm) => mutateEdit(data);
 
-  const { data, isError, isLoading } = useSections();
+  const { data: campaigns, isError, isLoading } = useCampaigns();
+  console.log("🚀 ~ CampaignsTable ~ campaigns:", campaigns)
 
   if (isLoading) {
     return (
@@ -52,7 +52,7 @@ export default function SectionsTable() {
     );
   }
   if (isError) return <Navigate to={"/404"} />;
-  if (data) {
+  if (campaigns) {
     return (
       <div className={"p-4"}>
         <Grid2
@@ -60,7 +60,7 @@ export default function SectionsTable() {
           spacing={{ xs: 2, md: 3 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {data?.map((section, index) => (
+          {campaigns?.map((campaign, index) => (
             <Grid2 size={{ xs: 2, sm: 4, md: 3 }} key={index}>
               <Card sx={{ minWidth: 190 }}>
                 <CardContent>
@@ -68,7 +68,7 @@ export default function SectionsTable() {
                     gutterBottom
                     sx={{ color: "text.secondary", fontSize: 14 }}
                   >
-                    {section.name}
+                    {campaign.name}
                   </Typography>
                   <Typography variant="h5" component="div">
                     Lorem ipsum dolor sit, amet consectetur
@@ -85,7 +85,7 @@ export default function SectionsTable() {
                 <CardActions>
                   <Button
                     size="small"
-                    onClick={() => handleClickOpen(section._id)}
+                    onClick={() => handleClickOpen(campaign._id)}
                   >
                     Editar
                   </Button>
@@ -94,12 +94,12 @@ export default function SectionsTable() {
             </Grid2>
           ))}
         </Grid2>
-        <EditSection
+        {/* <EditSection
           openEdit={openEdit}
           handleClose={handleClose}
           handleEdit={handleEdit}
           userId={selectedSectionId}
-        />
+        /> */}
       </div>
     );
   } else {

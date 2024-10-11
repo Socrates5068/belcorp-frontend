@@ -6,14 +6,21 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { UserRegistrationFormEnhanced } from "@/types/index";
+import { UserRegistrationFormEnhanced, userRoles } from "@/types/index";
 import { useForm } from "react-hook-form";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormHelperText from "@mui/material/FormHelperText";
+import { useSections } from "@/hooks/sections";
 
 interface CreateUserProps {
   open: boolean;
   handleClose: () => void;
   handleRegister: (data: UserRegistrationFormEnhanced) => void;
 }
+
 
 const CreateUser: React.FC<CreateUserProps> = ({
   open,
@@ -26,7 +33,8 @@ const CreateUser: React.FC<CreateUserProps> = ({
     reset,
     formState: { errors },
   } = useForm<UserRegistrationFormEnhanced>();
-
+  
+  const { data } = useSections();
   const onSubmit = (data: UserRegistrationFormEnhanced) => {
     handleRegister(data);
     reset();
@@ -108,6 +116,56 @@ const CreateUser: React.FC<CreateUserProps> = ({
                 error={!!errors.ci}
                 helperText={errors.ci?.message}
               />
+            </Grid>
+
+            {/* Campo de Rol */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required error={!!errors.roles}>
+                <InputLabel id="roles">Roles</InputLabel>
+                <Select
+                  labelId="roles"
+                  label="Roles"
+                  multiple
+                  {...register("roles", {
+                    required: "Al menos un rol es obligatorio",
+                  })}
+                  defaultValue={[]}
+                  renderValue={(selected) => (selected as string[]).join(", ")}
+                >
+                  {Object.values(userRoles).map((role) => (
+                    <MenuItem key={role} value={role}>
+                      {role}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.roles && (
+                  <FormHelperText>{errors.roles.message}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+
+            {/* Campo de Secciones */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required error={!!errors.section}>
+                <InputLabel id="section">Sección</InputLabel>
+                <Select
+                  labelId="section"
+                  label="Sección"
+                  {...register("section", {
+                    required: "La Sección es obligatoria",
+                  })}
+                  defaultValue={[]}
+                >
+                  {data?.map((section) => (
+                    <MenuItem key={section._id} value={section._id}>
+                      {section.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.section && (
+                  <FormHelperText>{errors.section?.message}</FormHelperText>
+                )}
+              </FormControl>
             </Grid>
           </Grid>
         </form>

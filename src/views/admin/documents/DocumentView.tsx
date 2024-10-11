@@ -1,14 +1,14 @@
 import React from "react";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
-import { SectionRegistrationForm } from "@/types/index";
+import { DocumentRegistrationForm } from "@/types/index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { Grid2 } from "@mui/material";
 import Divider from "@mui/material/Divider";
-import { createSection } from "@/api/SectionAPI";
-import CreateSection from "./CreateSection";
-import SectionsTable from "./SectionsTable";
+import CreateDocument from "./CreateDocument";
+import DocumentsTable from "./DocumentsTable";
+import { createDocument } from "@/api/DocumentAPI";
 
 export default function SectionView() {
   const [open, setOpen] = React.useState(false);
@@ -23,17 +23,17 @@ export default function SectionView() {
   };
 
   const { mutate } = useMutation({
-    mutationFn: createSection,
+    mutationFn: createDocument,
     onError: (error) => {
       toast.error(error.message);
     },
     onSuccess: (data) => {
       toast.success(data);
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
   });
 
-  const handleRegister = (data: SectionRegistrationForm) => mutate(data);
+  const handleRegister = (data: DocumentRegistrationForm) => mutate(data);
 
   return (
     <Paper elevation={3}>
@@ -45,9 +45,9 @@ export default function SectionView() {
             sx={{ mr: 1 }}
             onClick={handleClickOpen}
           >
-            Agregar Sección
+            Agregar Documento
           </Button>
-          <CreateSection
+          <CreateDocument
             open={open}
             handleClose={handleClose}
             handleRegister={handleRegister}
@@ -55,7 +55,7 @@ export default function SectionView() {
         </Grid2>
       </Grid2>
       <Divider />
-      <SectionsTable />
+      <DocumentsTable />
     </Paper>
   );
 }

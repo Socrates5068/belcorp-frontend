@@ -2,18 +2,30 @@ import * as React from "react";
 import { AppProvider, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { ToastContainer } from "react-toastify";
-import AppTheme from "./admin/AdminTheme";
+import AppTheme from "./lider/LiderTheme";
 import "react-toastify/dist/ReactToastify.css";
-import { PageContent } from "./admin/PageContent";
+import { PageContent } from "./lider/PageContent";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import AdminNavigation from "./admin/AdminNavigation";
 import { userRoles } from "../types";
-import type { Session } from "@toolpad/core";
+import {
+  PageContainer,
+  PageContainerToolbar,
+  type Session,
+} from "@toolpad/core";
 import { useQueryClient } from "@tanstack/react-query";
+import LiderNavigation from "./lider/LiderNavigation";
+import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
 
-export default function AdminLayout() {
-  const [pathname, setPathname] = React.useState("/usuarios");
+function PageToolbar() {
+  return (
+    <PageContainerToolbar>
+    </PageContainerToolbar>
+  );
+}
+
+export default function LiderLayout() {
+  const [pathname, setPathname] = React.useState("/campaigns");
   const navigate = React.useCallback(
     (path: string | URL) => setPathname(String(path)),
     []
@@ -27,7 +39,7 @@ export default function AdminLayout() {
     };
   }, [pathname, navigate]);
 
-  const navigation = AdminNavigation();
+  const navigation = LiderNavigation();
 
   const { data, isError, isLoading } = useAuth();
   const [session, setSession] = React.useState<Session | null>({
@@ -38,12 +50,10 @@ export default function AdminLayout() {
     },
   });
   const queryClient = useQueryClient();
-
-  const logout = React.useCallback( () => {
+  const logout = () => {
     localStorage.removeItem("AUTH_TOKEN");
     queryClient.invalidateQueries({ queryKey: ["role"] });
-  }, [queryClient]);
-  
+  };
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
@@ -60,7 +70,7 @@ export default function AdminLayout() {
         logout();
       },
     };
-  }, [logout]);
+  }, []);
 
   if (isLoading) return "Cargando...";
 
@@ -76,7 +86,8 @@ export default function AdminLayout() {
     return (
       <AppProvider
         branding={{
-          title: "MODULO GERENTE",
+          logo: <WorkspacePremiumIcon />,
+          title: "MODULO LIDER",
         }}
         navigation={navigation}
         router={router}
@@ -85,6 +96,12 @@ export default function AdminLayout() {
       >
         <AppTheme>
           <DashboardLayout>
+            <PageContainer
+              slots={{
+                toolbar: PageToolbar,
+              }}
+              pathname={pathname}
+            />
             <PageContent pathname={pathname} />
           </DashboardLayout>
         </AppTheme>
