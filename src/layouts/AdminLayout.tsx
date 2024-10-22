@@ -6,11 +6,11 @@ import AppTheme from "./admin/AdminTheme";
 import "react-toastify/dist/ReactToastify.css";
 import { PageContent } from "./admin/PageContent";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { isAdmin, isGerente, useAuth } from "@/hooks/useAuth";
 import AdminNavigation from "./admin/AdminNavigation";
-import { userRoles } from "../types";
 import type { Session } from "@toolpad/core";
 import { useQueryClient } from "@tanstack/react-query";
+import NavigateButton from "@/components/buttonBack";
 
 export default function AdminLayout() {
   const [pathname, setPathname] = React.useState("/usuarios");
@@ -29,7 +29,7 @@ export default function AdminLayout() {
 
   const navigation = AdminNavigation();
 
-  const { data, isError, isLoading } = useAuth();
+  const { data: user, isError, isLoading } = useAuth();
   const [session, setSession] = React.useState<Session | null>({
     user: {
       name: "Bharat Kashyap",
@@ -39,11 +39,11 @@ export default function AdminLayout() {
   });
   const queryClient = useQueryClient();
 
-  const logout = React.useCallback( () => {
+  const logout = React.useCallback(() => {
     localStorage.removeItem("AUTH_TOKEN");
     queryClient.invalidateQueries({ queryKey: ["role"] });
   }, [queryClient]);
-  
+
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
@@ -58,9 +58,10 @@ export default function AdminLayout() {
       signOut: () => {
         setSession(null);
         logout();
+        navigate(`/login`);
       },
     };
-  }, [logout]);
+  }, [logout, navigate]);
 
   if (isLoading) return "Cargando...";
 
@@ -68,11 +69,11 @@ export default function AdminLayout() {
     return <Navigate to="/auth/login" />;
   }
 
-  if (data && !data.roles.includes(userRoles.administrador)) {
+  if (user && (!isGerente(user.roles))) {
     return <Navigate to="/no-access" />;
   }
 
-  if (data)
+  if (user)
     return (
       <AppProvider
         branding={{
@@ -84,7 +85,7 @@ export default function AdminLayout() {
         authentication={authentication}
       >
         <AppTheme>
-          <DashboardLayout>
+          <DashboardLayout slots={{ toolbarActions: NavigateButton }}>
             <PageContent pathname={pathname} />
           </DashboardLayout>
         </AppTheme>

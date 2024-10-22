@@ -9,10 +9,21 @@ import CreateCampaign from "./CreateCampaigns";
 import { CampaignRegistrationForm } from "@/types/index";
 import { createCampaign } from "@/api/CampaignAPI";
 import CampaignsTable from "./CampaignsTable";
+import { isGerente, useAuth } from "@/hooks/useAuth";
 
-export default function CampaignsView() {
+interface CampaignsViewProps {
+  navigate: (data: string) => void;
+}
+
+export default function CampaignsView({ navigate }: Readonly<CampaignsViewProps>) {
   const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
+
+  const { data: user } = useAuth();
+
+  const campaignResourcebyId = (newData: string) => {
+    navigate(newData);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -33,29 +44,37 @@ export default function CampaignsView() {
     },
   });
 
-  const handleRegister = (data: CampaignRegistrationForm) => mutate(data);
+  const addButton = () => {
+    return (
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ mr: 1 }}
+        onClick={handleClickOpen}
+      >
+        Agregar Campaña
+      </Button>
+    );
+  };
 
-  return (
-    <Paper elevation={3}>
-      <Grid2 container direction="column" spacing={2}>
-        <Grid2 container justifyContent="flex-end" sx={{ p: 2, pr: 1 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ mr: 1 }}
-            onClick={handleClickOpen}
-          >
-            Agregar Campaña
-          </Button>
-          <CreateCampaign
-            open={open}
-            handleClose={handleClose}
-            handleRegister={handleRegister}
-          />
+  const handleRegister = (data: CampaignRegistrationForm) => mutate(data);
+  if (user)
+    return (
+      <Paper elevation={3}>
+        <Grid2 container direction="column" spacing={2}>
+          <Grid2 container justifyContent="flex-end" sx={{ p: 2, pr: 1 }}>
+            {isGerente(user.roles) 
+              ? addButton()
+              : ""}
+            <CreateCampaign
+              open={open}
+              handleClose={handleClose}
+              handleRegister={handleRegister}
+            />
+          </Grid2>
         </Grid2>
-      </Grid2>
-      <Divider />
-      <CampaignsTable />
-    </Paper>
-  );
+        <Divider />
+        <CampaignsTable navigate={campaignResourcebyId} />
+      </Paper>
+    );
 }

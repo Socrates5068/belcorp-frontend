@@ -6,8 +6,7 @@ import AppTheme from "./lider/LiderTheme";
 import "react-toastify/dist/ReactToastify.css";
 import { PageContent } from "./lider/PageContent";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { userRoles } from "../types";
+import { isSocia, useAuth } from "@/hooks/useAuth";
 import {
   PageContainer,
   PageContainerToolbar,
@@ -15,13 +14,10 @@ import {
 } from "@toolpad/core";
 import { useQueryClient } from "@tanstack/react-query";
 import LiderNavigation from "./lider/LiderNavigation";
-import WorkspacePremiumIcon from "@mui/icons-material/WorkspacePremium";
+import NavigateButton from "@/components/buttonBack";
 
 function PageToolbar() {
-  return (
-    <PageContainerToolbar>
-    </PageContainerToolbar>
-  );
+  return <PageContainerToolbar></PageContainerToolbar>;
 }
 
 export default function LiderLayout() {
@@ -41,19 +37,22 @@ export default function LiderLayout() {
 
   const navigation = LiderNavigation();
 
-  const { data, isError, isLoading } = useAuth();
+  const { data: user, isError, isLoading } = useAuth();
+
   const [session, setSession] = React.useState<Session | null>({
     user: {
-      name: "Bharat Kashyap",
-      email: "bharatkashyap@outlook.com",
+      name: user?.roles[0],
+      email: "email",
       image: "https://avatars.githubusercontent.com/u/19550456",
     },
   });
   const queryClient = useQueryClient();
-  const logout = () => {
+
+  const logout = React.useCallback(() => {
     localStorage.removeItem("AUTH_TOKEN");
     queryClient.invalidateQueries({ queryKey: ["role"] });
-  };
+  }, [queryClient]);
+
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
@@ -68,9 +67,10 @@ export default function LiderLayout() {
       signOut: () => {
         setSession(null);
         logout();
+        navigate(`/login`);
       },
     };
-  }, []);
+  }, [logout, navigate]);
 
   if (isLoading) return "Cargando...";
 
@@ -78,15 +78,15 @@ export default function LiderLayout() {
     return <Navigate to="/auth/login" />;
   }
 
-  if (data && !data.roles.includes(userRoles.administrador)) {
+  if (user && !isSocia(user.roles)) {
     return <Navigate to="/no-access" />;
   }
 
-  if (data)
+  if (user)
     return (
       <AppProvider
         branding={{
-          logo: <WorkspacePremiumIcon />,
+          /* logo: <Logo />, */
           title: "MODULO LIDER",
         }}
         navigation={navigation}
@@ -95,14 +95,14 @@ export default function LiderLayout() {
         authentication={authentication}
       >
         <AppTheme>
-          <DashboardLayout>
+          <DashboardLayout slots={{ toolbarActions: NavigateButton }}>
             <PageContainer
               slots={{
                 toolbar: PageToolbar,
               }}
               pathname={pathname}
             />
-            <PageContent pathname={pathname} />
+            <PageContent pathname={pathname} navigate={router.navigate} />
           </DashboardLayout>
         </AppTheme>
         <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />

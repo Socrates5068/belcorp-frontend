@@ -6,6 +6,7 @@ const NAVIGATION: Navigation = [
     segment: "campaigns",
     title: "Campañas",
     icon: <CampaignIcon />,
+    pattern: 'campaigns{/:campaignId}*',
   }
 ];
 

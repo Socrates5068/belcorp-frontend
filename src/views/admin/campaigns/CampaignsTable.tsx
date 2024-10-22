@@ -11,12 +11,21 @@ import { toast } from "react-toastify";
 import { updateSection } from "@/api/SectionAPI";
 import Grid2 from "@mui/material/Grid2";
 import { useCampaigns } from "@/hooks/campaigns";
+import CardActionArea from "@mui/material/CardActionArea";
+import CardMedia from "@mui/material/CardMedia";
+import { formatDate } from "@/utils/utils";
+import { CardHeader, Divider } from "@mui/material";
 
-export default function CampaignsTable() {
+interface CampaignsTableProps {
+  navigate: (changedData: string) => void; // Ajusta 'any' según sea necesario
+}
+
+export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProps>) {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
     null
   );
+
   const queryClient = useQueryClient();
 
   const handleClickOpen = (id: string) => {
@@ -42,7 +51,6 @@ export default function CampaignsTable() {
   const handleEdit = (data: UpdateSectionForm) => mutateEdit(data);
 
   const { data: campaigns, isError, isLoading } = useCampaigns();
-  console.log("🚀 ~ CampaignsTable ~ campaigns:", campaigns)
 
   if (isLoading) {
     return (
@@ -62,30 +70,49 @@ export default function CampaignsTable() {
         >
           {campaigns?.map((campaign, index) => (
             <Grid2 size={{ xs: 2, sm: 4, md: 3 }} key={index}>
-              <Card sx={{ minWidth: 190 }}>
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    sx={{ color: "text.secondary", fontSize: 14 }}
-                  >
-                    {campaign.name}
-                  </Typography>
-                  <Typography variant="h5" component="div">
-                    Lorem ipsum dolor sit, amet consectetur
-                  </Typography>
-                  <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
-                    adjective
-                  </Typography>
-                  <Typography variant="body2">
-                    well meaning and kindly.
-                    <br />
-                    {'"a benevolent smile"'}
-                  </Typography>
-                </CardContent>
+              {index + 1}
+              <Card
+                sx={{ maxWidth: 345 }}
+                onClick={() => {
+                  navigate(`/campaigns/${index+1}`);
+                }}
+              >
+                <CardHeader
+                  title={campaign.name}
+                  /* subheader="September 14, 2016" */
+                />
+                <CardActionArea>
+                  {/* <CardMedia
+                    component="img"
+                    height="140"
+                    image="/reptile.jpg"
+                    alt="green iguana"
+                  /> */}
+                  <CardContent>
+                    <Typography gutterBottom variant="h6" component="div">
+                      Fecha inicio
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {formatDate(campaign.startDate)}
+                    </Typography>
+                    <Typography gutterBottom variant="h6" component="div">
+                      Fecha fin
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {formatDate(campaign.endDate)}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
                 <CardActions>
                   <Button
                     size="small"
-                    onClick={() => handleClickOpen(campaign._id)}
+                    color="primary"
                   >
                     Editar
                   </Button>
