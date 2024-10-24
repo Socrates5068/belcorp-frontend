@@ -109,7 +109,7 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
                     </Typography>
                   </CardContent>
                 </CardActionArea>
-                <CardActions>
+                {/* <CardActions>
                   <Button
                     size="small"
                     color="primary"
@@ -117,7 +117,7 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
                   >
                     Editar
                   </Button>
-                </CardActions>
+                </CardActions> */}
               </Card>
             </Grid2>
           ))}
@@ -133,7 +133,7 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
   } else {
     return (
       <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-        No hay Secciones registradas
+        No hay Campañas registradas
       </Typography>
     );
   }

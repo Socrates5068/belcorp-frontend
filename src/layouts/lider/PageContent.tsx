@@ -23,7 +23,6 @@ export function PageContent({
       {pathname == "/campaigns" ? (
         <>
           <Typography variant="h5" gutterBottom>
-            {pathname.replace("/", "").toUpperCase()}
           </Typography>
           <CampaignsView navigate={handleDataFromChild} />
         </>
