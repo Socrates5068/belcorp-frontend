@@ -115,7 +115,7 @@ const CreateDocument: React.FC<CreateSectionProps> = ({
             {/* Campo de Campañas */}
             <Grid2 size={6}>
               <FormControl fullWidth required error={!!errors.campaign}>
-                <InputLabel id="campaign">Sección</InputLabel>
+                <InputLabel id="campaign">Campaña</InputLabel>
                 <Select
                   labelId="campaign"
                   label="Campaña"

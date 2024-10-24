@@ -11,7 +11,6 @@ import { UserRegistrationFormEnhanced } from "@/types/index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { isGerente, useAuth } from "@/hooks/useAuth";
-import CreateUserGerente from "./CreateUserGerente";
 
 export default function UserView() {
   const [open, setOpen] = React.useState(false);
@@ -44,7 +43,7 @@ export default function UserView() {
   if (user && isGerente(user?.roles)) {
     createUser = () => {
       return (
-        <CreateUserGerente
+        <CreateUser
           open={open}
           handleClose={handleClose}
           handleRegister={handleRegister}
