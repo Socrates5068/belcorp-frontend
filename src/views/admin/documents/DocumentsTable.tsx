@@ -10,15 +10,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateUser } from "@/api/UserAPI";
 import { Navigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
-import {
-  UpdateUserForm,
-} from "@/types/index";
+import { UpdateUserForm } from "@/types/index";
 import EditIcon from "@mui/icons-material/Edit";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import EditUser from "./EditUser";
 import { getDocuments } from "@/api/DocumentAPI";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -99,13 +98,12 @@ export default function DocumentsTable() {
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>C.I.</StyledTableCell>
                 <StyledTableCell align="right">Título</StyledTableCell>
                 <StyledTableCell align="right">Descripción</StyledTableCell>
                 <StyledTableCell align="right">
                   Fecha de creación
                 </StyledTableCell>
-                <StyledTableCell align="right"></StyledTableCell>
+                <StyledTableCell align="right">Acciones</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -121,6 +119,15 @@ export default function DocumentsTable() {
                     {document.createdAt}
                   </StyledTableCell>
                   <StyledTableCell align="right">
+                    <IconButton
+                      href={`http://localhost:4000/api/documents/download/${document._id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="primary"
+                      aria-label="descargar documento"
+                    >
+                      <DownloadIcon />
+                    </IconButton>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
@@ -138,7 +145,7 @@ export default function DocumentsTable() {
   } else {
     return (
       <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-        No hay usuarios registrados
+        No hay documentos registrados
       </Typography>
     );
   }

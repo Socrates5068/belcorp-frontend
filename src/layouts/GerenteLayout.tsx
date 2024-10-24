@@ -4,15 +4,15 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { ToastContainer } from "react-toastify";
 import AppTheme from "./gerente/AdminTheme";
 import "react-toastify/dist/ReactToastify.css";
-import { PageContent } from "./administrador/PageContent";
+import { PageContent } from "./gerente/PageContent";
 import { Navigate } from "react-router-dom";
-import { isAdmin, useAuth } from "@/hooks/useAuth";
+import { isGerente, useAuth } from "@/hooks/useAuth";
+import AdminNavigation from "./gerente/GerenteNavigation";
 import type { Session } from "@toolpad/core";
 import { useQueryClient } from "@tanstack/react-query";
 import NavigateButton from "@/components/buttonBack";
-import AdminNavigation from "./administrador/AdminNavigation";
 
-export default function AdminLayout() {
+export default function GerenteLayout() {
   const [pathname, setPathname] = React.useState("/usuarios");
   const navigate = React.useCallback(
     (path: string | URL) => setPathname(String(path)),
@@ -69,7 +69,7 @@ export default function AdminLayout() {
     return <Navigate to="/auth/login" />;
   }
 
-  if (user && (!isAdmin(user.roles))) {
+  if (user && (!isGerente(user.roles))) {
     return <Navigate to="/no-access" />;
   }
 
@@ -77,7 +77,7 @@ export default function AdminLayout() {
     return (
       <AppProvider
         branding={{
-          title: "MODULO ADMINISTRADOR",
+          title: "MODULO GERENTE",
         }}
         navigation={navigation}
         router={router}

@@ -13,6 +13,7 @@ import { useCampaigns } from "@/hooks/campaigns";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import { MenuItem, Select } from "@mui/material";
+import { useSections } from "@/hooks/sections";
 
 interface CreateSectionProps {
   open: boolean;
@@ -53,6 +54,7 @@ const CreateDocument: React.FC<CreateSectionProps> = ({
   };
   
   const { data: campaigns } = useCampaigns();
+  const { data: sections } = useSections();
 
 
   // Función para manejar el cierre y resetear el formulario
@@ -67,7 +69,7 @@ const CreateDocument: React.FC<CreateSectionProps> = ({
       onClose={handleCancel}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Registrar Sección</DialogTitle>
+      <DialogTitle id="form-dialog-title">Subir Archivo</DialogTitle>
       <DialogContent sx={{ width: 484 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid2 container spacing={2} size={12}>
@@ -111,7 +113,7 @@ const CreateDocument: React.FC<CreateSectionProps> = ({
             </Grid2>
 
             {/* Campo de Campañas */}
-            <Grid2 size={12}>
+            <Grid2 size={6}>
               <FormControl fullWidth required error={!!errors.campaign}>
                 <InputLabel id="campaign">Sección</InputLabel>
                 <Select
@@ -130,6 +132,30 @@ const CreateDocument: React.FC<CreateSectionProps> = ({
                 </Select>
                 {errors.campaign && (
                   <FormHelperText>{errors.campaign?.message}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid2>
+
+            {/* Campo de Secciones */}
+            <Grid2 size={6}>
+              <FormControl fullWidth required error={!!errors.section}>
+                <InputLabel id="section">Sección</InputLabel>
+                <Select
+                  labelId="section"
+                  label="Sección"
+                  {...register("section", {
+                    required: "La Sección es obligatoria",
+                  })}
+                  defaultValue={[]}
+                >
+                  {sections?.map((section) => (
+                    <MenuItem key={section._id} value={section._id}>
+                      {section.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.section && (
+                  <FormHelperText>{errors.section?.message}</FormHelperText>
                 )}
               </FormControl>
             </Grid2>

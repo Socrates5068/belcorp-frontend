@@ -4,11 +4,12 @@ import LoginView from "./views/auth/LoginView";
 import ForgotPasswordView from "./views/auth/ForgotPasswordView";
 import NewPasswordView from "./views/auth/NewPasswordView";
 import NotFound from "./views/404/NotFound";
-import AdminLayout from "./layouts/AdminLayout";
+import GerenteLayout from "./layouts/GerenteLayout";
 import DashboardView from "./views/DashboardView";
 import NoAccess from "./views/404/NoAccess";
 import SelectView from "./views/SelectView";
 import LiderLayout from "./layouts/LiderLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 export default function Router() {
   return (
@@ -16,7 +17,12 @@ export default function Router() {
       <Routes>
         <Route path="/selec" element={<SelectView />} index />
         <Route path="/" element={<DashboardView />} index />
+
         <Route element={<AdminLayout />}>
+          <Route path="/administrador" element={<DashboardView />} index />
+        </Route>
+
+        <Route element={<GerenteLayout />}>
           <Route path="/gerente" element={<DashboardView />} index />
         </Route>
         

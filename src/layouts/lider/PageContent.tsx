@@ -36,7 +36,6 @@ export function PageContent({
           <CampaigResouces />
         </>
       ) : null}
-      {console.log("🚀 ~ pathname:", pathname)}
     </Box>
   );
 }

@@ -13,6 +13,7 @@ export async function createDocument(
     formData.append("title", documentFormData.title);
     formData.append("description", documentFormData.description);
     formData.append("campaign", documentFormData.campaign);
+    formData.append("section", documentFormData.section);
     formData.append("file", documentFormData.file); // Assuming file is an array
 
     const url = `/documents`;

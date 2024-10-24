@@ -19,6 +19,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { getDocuments } from "@/api/DocumentAPI";
 import EditUser from "../users/EditUser";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -88,13 +89,12 @@ export default function CampaigResouces() {
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>C.I.</StyledTableCell>
                 <StyledTableCell align="right">Título</StyledTableCell>
                 <StyledTableCell align="right">Descripción</StyledTableCell>
                 <StyledTableCell align="right">
                   Fecha de creación
                 </StyledTableCell>
-                <StyledTableCell align="right"></StyledTableCell>
+                <StyledTableCell align="right">Acciones</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -110,6 +110,15 @@ export default function CampaigResouces() {
                     {document.createdAt}
                   </StyledTableCell>
                   <StyledTableCell align="right">
+                    <IconButton
+                      href={`http://localhost:4000/api/documents/download/${document._id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      color="primary"
+                      aria-label="descargar documento"
+                    >
+                      <DownloadIcon />
+                    </IconButton>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

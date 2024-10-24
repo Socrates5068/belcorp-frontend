@@ -59,6 +59,7 @@ export const isAdminSchema = z.object({
 /** Sections */
 export const sectionSchema = z.object({
   name: z.string(),
+  description: z.string(),
   _id: z.string(),
 });
 
@@ -81,6 +82,7 @@ const documentSchema = z.object({
   createdAt: z.string(),
   url: z.string(),
   campaign: z.string(),
+  section: z.string(),
 });
 
 const createDocument = documentSchema
@@ -88,6 +90,7 @@ const createDocument = documentSchema
     title: true,
     description: true,
     campaign: true,
+    section: true,
   })
   .extend({
     file: z.instanceof(File),
@@ -97,7 +100,7 @@ export const documents = z.array(documentSchema);
 type Document = z.infer<typeof createDocument>;
 export type DocumentRegistrationForm = Pick<
   Document,
-  "title" | "description" | "file" | "campaign"
+  "title" | "description" | "file" | "campaign" | "section"
 >;
 
 /* Campaigns */
@@ -114,12 +117,21 @@ const createCampaign = campaignSchema.pick({
   endDate: true,
 });
 
+export const editCampaign = campaignSchema.pick({
+  name: true,
+  startDate: true,
+  endDate: true,
+});
+
 export const campaigns = z.array(campaignSchema);
 type Campaign = z.infer<typeof createCampaign>;
 export type CampaignRegistrationForm = Pick<
   Campaign,
   "name" | "startDate" | "endDate"
 >;
+export type UpdateCampaignForm = Pick<Campaign, "name" | "startDate" | "endDate"> & {
+  _id: string | null;
+};
 
 /** Users */
 export const userSchema = authSchema

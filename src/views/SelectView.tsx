@@ -1,6 +1,7 @@
-import { Card, CardContent, Grid2, Typography } from "@mui/material";
+import { Button, Card, CardContent, Grid2, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SelectView = () => {
   const navigate = useNavigate();
@@ -10,14 +11,50 @@ const SelectView = () => {
     navigate(`/${module}`);
   };
 
+  const queryClient = useQueryClient();
+  
+  const handleLogout = () => {
+    localStorage.removeItem("AUTH_TOKEN");
+    queryClient.invalidateQueries({ queryKey: ["role"] });
+    navigate(`/auth/login`);
+  };
+
+
   return (
-    <Grid2
+    <Grid2 sx={{ p: 5 }}
       container
-      spacing={2}
+      spacing={4}
       justifyContent="center"
       alignItems="center"
-      style={{ height: "100vh" }}
+      style={{ height: "70vh" }}
     >
+      <Grid2 >
+        <Card
+          onClick={() => handleRedirect("administrador")}
+          onMouseEnter={() => setHoveredCard("administrador")}
+          onMouseLeave={() => setHoveredCard(null)}
+          style={{
+            width: "350px",
+            height: "350px",
+            cursor: "pointer",
+            transform: hoveredCard === "administrador" ? "scale(1.05)" : "scale(1)",
+            transition: "transform 0.3s ease",
+          }}
+        >
+          <CardContent
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
+          >
+            <Typography variant="h2" align="center">
+              Módulo Administrador
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid2>
       <Grid2>
         <Card
           onClick={() => handleRedirect("gerente")}
@@ -127,6 +164,11 @@ const SelectView = () => {
             </Typography>
           </CardContent>
         </Card>
+      </Grid2>
+      <Grid2 size={{ xs: 2, sm: 4, md: 3 }} sx={{ textAlign: 'center' }}>
+        <Button variant="contained" color="secondary" onClick={handleLogout}>
+          Cerrar sesión
+        </Button>
       </Grid2>
     </Grid2>
   );

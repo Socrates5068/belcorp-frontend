@@ -10,6 +10,8 @@ import { createAccountEnhanced } from "@/api/AuthAPI";
 import { UserRegistrationFormEnhanced } from "@/types/index";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import { isGerente, useAuth } from "@/hooks/useAuth";
+import CreateUserGerente from "./CreateUserGerente";
 
 export default function UserView() {
   const [open, setOpen] = React.useState(false);
@@ -36,6 +38,31 @@ export default function UserView() {
 
   const handleRegister = (data: UserRegistrationFormEnhanced) => mutate(data);
 
+  const { data: user } = useAuth();
+  let createUser;
+
+  if (user && isGerente(user?.roles)) {
+    createUser = () => {
+      return (
+        <CreateUserGerente
+          open={open}
+          handleClose={handleClose}
+          handleRegister={handleRegister}
+        />
+      );
+    };
+  } else {
+    createUser = () => {
+      return (
+        <CreateUser
+          open={open}
+          handleClose={handleClose}
+          handleRegister={handleRegister}
+        />
+      );
+    };
+  }
+
   return (
     <Paper sx={{ maxWidth: "max-w-96", margin: "auto", overflow: "hidden" }}>
       <AppBar
@@ -45,8 +72,12 @@ export default function UserView() {
         sx={{ borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}
       >
         <Toolbar>
-          <Grid container spacing={2} alignItems="center" justifyContent="flex-end">
-
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            justifyContent="flex-end"
+          >
             <Grid item>
               <Button
                 variant="contained"
@@ -56,11 +87,7 @@ export default function UserView() {
               >
                 Agregar usuario
               </Button>
-              <CreateUser
-                open={open}
-                handleClose={handleClose}
-                handleRegister={handleRegister}
-              />
+              {createUser()}
             </Grid>
           </Grid>
         </Toolbar>

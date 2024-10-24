@@ -26,6 +26,6 @@ const NAVIGATION: Navigation = [
   },
 ];
 
-export default function AdminNavigation() {
+export default function GerenteNavigation() {
   return NAVIGATION;
 }

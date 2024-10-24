@@ -12,9 +12,10 @@ import { updateSection } from "@/api/SectionAPI";
 import Grid2 from "@mui/material/Grid2";
 import { useCampaigns } from "@/hooks/campaigns";
 import CardActionArea from "@mui/material/CardActionArea";
-import CardMedia from "@mui/material/CardMedia";
 import { formatDate } from "@/utils/utils";
-import { CardHeader, Divider } from "@mui/material";
+import { CardHeader } from "@mui/material";
+import EditCampaign from "./EditCampaign";
+import { updateCampaign } from "@/api/CampaignAPI";
 
 interface CampaignsTableProps {
   navigate: (changedData: string) => void; // Ajusta 'any' según sea necesario
@@ -22,14 +23,14 @@ interface CampaignsTableProps {
 
 export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProps>) {
   const [openEdit, setOpenEdit] = React.useState(false);
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
     null
   );
 
   const queryClient = useQueryClient();
 
   const handleClickOpen = (id: string) => {
-    setSelectedSectionId(id); // Establece el ID del usuario seleccionado
+    setSelectedCampaignId(id); // Establece el ID del usuario seleccionado
     setOpenEdit(true);
   };
 
@@ -38,17 +39,17 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
   };
 
   const { mutate: mutateEdit } = useMutation({
-    mutationFn: updateSection,
+    mutationFn: updateCampaign,
     onError: (error) => {
       toast.error(error.message);
     },
     onSuccess: (data) => {
-      toast.success(data);
+      toast.success('Actualizado');
       queryClient.invalidateQueries({ queryKey: ["campaigns"] });
     },
   });
 
-  const handleEdit = (data: UpdateSectionForm) => mutateEdit(data);
+  const handleEdit = (data: UpdateCampaignForm) => mutateEdit(data);
 
   const { data: campaigns, isError, isLoading } = useCampaigns();
 
@@ -70,7 +71,6 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
         >
           {campaigns?.map((campaign, index) => (
             <Grid2 size={{ xs: 2, sm: 4, md: 3 }} key={index}>
-              {index + 1}
               <Card
                 sx={{ maxWidth: 345 }}
                 onClick={() => {
@@ -113,6 +113,7 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
                   <Button
                     size="small"
                     color="primary"
+                    onClick={() => handleClickOpen(campaign._id)}
                   >
                     Editar
                   </Button>
@@ -121,12 +122,12 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
             </Grid2>
           ))}
         </Grid2>
-        {/* <EditSection
-          openEdit={openEdit}
+        <EditCampaign
+          open={openEdit}
           handleClose={handleClose}
           handleEdit={handleEdit}
-          userId={selectedSectionId}
-        /> */}
+          userId={selectedCampaignId}
+        />
       </div>
     );
   } else {

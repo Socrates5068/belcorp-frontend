@@ -71,16 +71,16 @@ export default function SectionsTable() {
                     {section.name}
                   </Typography>
                   <Typography variant="h5" component="div">
-                    Lorem ipsum dolor sit, amet consectetur
+                    {section.description}
                   </Typography>
-                  <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
+                  {/* <Typography sx={{ color: "text.secondary", mb: 1.5 }}>
                     adjective
                   </Typography>
                   <Typography variant="body2">
                     well meaning and kindly.
                     <br />
                     {'"a benevolent smile"'}
-                  </Typography>
+                  </Typography> */}
                 </CardContent>
                 <CardActions>
                   <Button

@@ -63,9 +63,9 @@ export default function CampaignsView({ navigate }: Readonly<CampaignsViewProps>
       <Paper elevation={3}>
         <Grid2 container direction="column" spacing={2}>
           <Grid2 container justifyContent="flex-end" sx={{ p: 2, pr: 1 }}>
-            {isGerente(user.roles) 
+            {/* {isGerente(user.roles) 
               ? addButton()
-              : ""}
+              : ""} */}
             <CreateCampaign
               open={open}
               handleClose={handleClose}

@@ -22,7 +22,7 @@ interface CreateUserProps {
   handleRegister: (data: UserRegistrationFormEnhanced) => void;
 }
 
-const CreateUser: React.FC<CreateUserProps> = ({
+const CreateUserGerente: React.FC<CreateUserProps> = ({
   open,
   handleClose,
   handleRegister,
@@ -33,17 +33,6 @@ const CreateUser: React.FC<CreateUserProps> = ({
     reset,
     formState: { errors },
   } = useForm<UserRegistrationFormEnhanced>();
-
-  const { data: user } = useAuth();
-  let roles;
-
-  if (user && isGerente(user?.roles)) {
-    roles = {
-      socia: "Socia",
-    };
-  } else {
-    roles = userRoles;
-  }
 
   const { data } = useSections();
   const onSubmit = (data: UserRegistrationFormEnhanced) => {
@@ -129,34 +118,8 @@ const CreateUser: React.FC<CreateUserProps> = ({
               />
             </Grid>
 
-            {/* Campo de Rol */}
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required error={!!errors.roles}>
-                <InputLabel id="roles">Roles</InputLabel>
-                <Select
-                  labelId="roles"
-                  label="Roles"
-                  multiple
-                  {...register("roles", {
-                    required: "Al menos un rol es obligatorio",
-                  })}
-                  defaultValue={[]}
-                  renderValue={(selected) => (selected as string[]).join(", ")}
-                >
-                  {Object.values(roles).map((role) => (
-                    <MenuItem key={role} value={role}>
-                      {role}
-                    </MenuItem>
-                  ))}
-                </Select>
-                {errors.roles && (
-                  <FormHelperText>{errors.roles.message}</FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-
             {/* Campo de Secciones */}
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <FormControl fullWidth required error={!!errors.section}>
                 <InputLabel id="section">Sección</InputLabel>
                 <Select
@@ -193,4 +156,4 @@ const CreateUser: React.FC<CreateUserProps> = ({
   );
 };
 
-export default CreateUser;
+export default CreateUserGerente;

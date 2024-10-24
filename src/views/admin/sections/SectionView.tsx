@@ -39,7 +39,7 @@ export default function SectionView() {
     <Paper elevation={3}>
       <Grid2 container direction="column" spacing={2}>
         <Grid2 container justifyContent="flex-end" sx={{ p: 2, pr: 1 }}>
-          <Button
+          {/* <Button
             variant="contained"
             color="primary"
             sx={{ mr: 1 }}
@@ -51,7 +51,7 @@ export default function SectionView() {
             open={open}
             handleClose={handleClose}
             handleRegister={handleRegister}
-          />
+          /> */}
         </Grid2>
       </Grid2>
       <Divider />
