@@ -32,9 +32,9 @@ export default function AdminLayout() {
   const { data: user, isError, isLoading } = useAuth();
   const [session, setSession] = React.useState<Session | null>({
     user: {
-      name: "Bharat Kashyap",
-      email: "bharatkashyap@outlook.com",
-      image: "https://avatars.githubusercontent.com/u/19550456",
+      name: user?.name,
+      email: user?.email,
+      image: "",
     },
   });
   const queryClient = useQueryClient();
@@ -49,9 +49,9 @@ export default function AdminLayout() {
       signIn: () => {
         setSession({
           user: {
-            name: "Bharat Kashyap",
-            email: "bharatkashyap@outlook.com",
-            image: "https://avatars.githubusercontent.com/u/19550456",
+            name: user?.name,
+            email: user?.email,
+            image: "",
           },
         });
       },
@@ -69,7 +69,7 @@ export default function AdminLayout() {
     return <Navigate to="/auth/login" />;
   }
 
-  if (user && (!isAdmin(user.roles))) {
+  if (user && !isAdmin(user.roles)) {
     return <Navigate to="/no-access" />;
   }
 

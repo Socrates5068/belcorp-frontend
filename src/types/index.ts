@@ -14,8 +14,19 @@ export const userRoles = {
   consultora: "Consultora",
 };
 
+export const userPermissions =  {
+  CreateUser: "CreateUser",
+  EditUser: "EditUser",
+  EditCampaign: "EditCampaign",
+  EditSection: "EditSection",
+  CreateDocument: "CreateDocument",
+  EditDocument: "EditDocument",
+  DeleteDocument: "DeleteDocument",
+}
+
 export const userStatusEnum = z.nativeEnum(userStatus);
 export const userRolesEnum = z.nativeEnum(userRoles);
+export const permissionEnum = z.nativeEnum(userPermissions);
 
 /** Auth & Users */
 const authSchema = z.object({
@@ -29,6 +40,7 @@ const authSchema = z.object({
   token: z.string(),
   section: z.string(),
   roles: z.array(z.string()),
+  permissions: z.array(permissionEnum),
 });
 
 type Auth = z.infer<typeof authSchema>;
@@ -39,7 +51,7 @@ export type UserRegistrationForm = Pick<
 >;
 export type UserRegistrationFormEnhanced = Pick<
   Auth,
-  "name" | "email" | "last_name" | "ci" | "roles" | "section"
+  "name" | "email" | "last_name" | "ci" | "roles" | "section" | "permissions"
 >;
 
 export type RequestConfirmationCodeForm = Pick<Auth, "email">;
@@ -53,7 +65,11 @@ export type ConfirmToken = Pick<Auth, "token">;
 export type CheckPasswordForm = Pick<Auth, "password">;
 
 export const isAdminSchema = z.object({
+  name: z.string(),
+  email: z.string(),
   roles: z.array(z.string()),
+  permissions: z.array(z.string()),
+  section: z.string(),
 });
 
 /** Sections */

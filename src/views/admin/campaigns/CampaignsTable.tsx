@@ -4,7 +4,7 @@ import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-import { UpdateSectionForm } from "@/types/index";
+import { UpdateCampaignForm, UpdateSectionForm } from "@/types/index";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
@@ -16,6 +16,7 @@ import { formatDate } from "@/utils/utils";
 import { CardHeader } from "@mui/material";
 import EditCampaign from "./EditCampaign";
 import { updateCampaign } from "@/api/CampaignAPI";
+import { isGerente, useAuth } from "@/hooks/useAuth";
 
 interface CampaignsTableProps {
   navigate: (changedData: string) => void; // Ajusta 'any' según sea necesario
@@ -52,6 +53,8 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
   const handleEdit = (data: UpdateCampaignForm) => mutateEdit(data);
 
   const { data: campaigns, isError, isLoading } = useCampaigns();
+
+  const { data: user } = useAuth();
 
   if (isLoading) {
     return (
@@ -109,7 +112,8 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
                     </Typography>
                   </CardContent>
                 </CardActionArea>
-                {/* <CardActions>
+                {user && isGerente(user?.roles) ? 
+                <CardActions>
                   <Button
                     size="small"
                     color="primary"
@@ -117,7 +121,9 @@ export default function CampaignsTable({ navigate }: Readonly<CampaignsTableProp
                   >
                     Editar
                   </Button>
-                </CardActions> */}
+                </CardActions>
+                :''
+              }
               </Card>
             </Grid2>
           ))}

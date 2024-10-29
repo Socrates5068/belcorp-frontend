@@ -43,7 +43,7 @@ export default function LiderLayout() {
     user: {
       name: user?.roles[0],
       email: "email",
-      image: "https://avatars.githubusercontent.com/u/19550456",
+      image: "",
     },
   });
   const queryClient = useQueryClient();
@@ -58,9 +58,9 @@ export default function LiderLayout() {
       signIn: () => {
         setSession({
           user: {
-            name: "Bharat Kashyap",
-            email: "bharatkashyap@outlook.com",
-            image: "https://avatars.githubusercontent.com/u/19550456",
+            name: user?.name,
+            email: user?.email,
+            image: "",
           },
         });
       },

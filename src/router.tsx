@@ -10,6 +10,7 @@ import NoAccess from "./views/404/NoAccess";
 import SelectView from "./views/SelectView";
 import LiderLayout from "./layouts/LiderLayout";
 import AdminLayout from "./layouts/AdminLayout";
+import ConsultoraLayout from "./layouts/ConsultoraLayout";
 
 export default function Router() {
   return (
@@ -28,6 +29,10 @@ export default function Router() {
         
         <Route element={<LiderLayout />}>
           <Route path="/lider" element={<DashboardView />} index />
+        </Route>
+
+        <Route element={<ConsultoraLayout />}>
+          <Route path="/consultora" element={<DashboardView />} index />
         </Route>
 
         <Route element={<AuthLayout />}>

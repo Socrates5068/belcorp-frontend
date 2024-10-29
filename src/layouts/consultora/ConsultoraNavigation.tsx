@@ -8,13 +8,8 @@ const NAVIGATION: Navigation = [
     icon: <CampaignIcon />,
     pattern: 'campaigns{/:campaignId}*',
   },
-  {
-    segment: "users",
-    title: "Consultoras",
-    icon: <CampaignIcon />
-  },
 ];
 
-export default function LiderNavigation() {
+export default function ConsultoraNavigation() {
   return NAVIGATION;
 }

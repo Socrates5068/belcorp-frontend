@@ -2,18 +2,26 @@ import * as React from "react";
 import { AppProvider, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { ToastContainer } from "react-toastify";
-import AppTheme from "./gerente/AdminTheme";
+import AppTheme from "./lider/LiderTheme";
 import "react-toastify/dist/ReactToastify.css";
-import { PageContent } from "./gerente/PageContent";
 import { Navigate } from "react-router-dom";
-import { isGerente, useAuth } from "@/hooks/useAuth";
-import AdminNavigation from "./gerente/GerenteNavigation";
-import type { Session } from "@toolpad/core";
+import { isConsultora, useAuth } from "@/hooks/useAuth";
+import {
+  PageContainer,
+  PageContainerToolbar,
+  type Session,
+} from "@toolpad/core";
 import { useQueryClient } from "@tanstack/react-query";
 import NavigateButton from "@/components/buttonBack";
+import ConsultoraNavigation from "./consultora/ConsultoraNavigation";
+import { PageContent } from "./consultora/PageContent";
 
-export default function GerenteLayout() {
-  const [pathname, setPathname] = React.useState("/usuarios");
+function PageToolbar() {
+  return <PageContainerToolbar></PageContainerToolbar>;
+}
+
+export default function ConsultoraLayout() {
+  const [pathname, setPathname] = React.useState("/campaigns");
   const navigate = React.useCallback(
     (path: string | URL) => setPathname(String(path)),
     []
@@ -27,9 +35,10 @@ export default function GerenteLayout() {
     };
   }, [pathname, navigate]);
 
-  const navigation = AdminNavigation();
+  const navigation = ConsultoraNavigation();
 
   const { data: user, isError, isLoading } = useAuth();
+
   const [session, setSession] = React.useState<Session | null>({
     user: {
       name: user?.name,
@@ -61,7 +70,7 @@ export default function GerenteLayout() {
         navigate(`/login`);
       },
     };
-  }, [logout, navigate]);
+  }, [logout, navigate, user?.email, user?.name]);
 
   if (isLoading) return "Cargando...";
 
@@ -69,7 +78,7 @@ export default function GerenteLayout() {
     return <Navigate to="/auth/login" />;
   }
 
-  if (user && !isGerente(user.roles)) {
+  if (user && !isConsultora(user.roles)) {
     return <Navigate to="/no-access" />;
   }
 
@@ -77,7 +86,8 @@ export default function GerenteLayout() {
     return (
       <AppProvider
         branding={{
-          title: "MODULO GERENTE",
+          /* logo: <Logo />, */
+          title: "MODULO CONSULTORA",
         }}
         navigation={navigation}
         router={router}
@@ -86,7 +96,13 @@ export default function GerenteLayout() {
       >
         <AppTheme>
           <DashboardLayout slots={{ toolbarActions: NavigateButton }}>
-            <PageContent pathname={pathname} />
+            <PageContainer
+              slots={{
+                toolbar: PageToolbar,
+              }}
+              pathname={pathname}
+            />
+            <PageContent pathname={pathname} navigate={router.navigate} />
           </DashboardLayout>
         </AppTheme>
         <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />

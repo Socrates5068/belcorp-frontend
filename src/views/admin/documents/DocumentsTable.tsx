@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,11 +14,13 @@ import IconButton from "@mui/material/IconButton";
 import { UpdateUserForm } from "@/types/index";
 import EditIcon from "@mui/icons-material/Edit";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
 import { toast } from "react-toastify";
 import EditUser from "./EditUser";
 import { getDocuments } from "@/api/DocumentAPI";
 import DownloadIcon from "@mui/icons-material/Download";
+import { getSectionById } from "@/api/SectionAPI";
+import { getCampaignById } from "@/api/CampaignAPI"; // Asegúrate de tener una API para obtener campañas
+import { formatDate } from "@/utils/utils";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,7 +36,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
   },
@@ -42,10 +44,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function DocumentsTable() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [sections, setSections] = useState<{ [key: string]: string }>({});
+  const [campaigns, setCampaigns] = useState<{ [key: string]: string }>({}); // Estado para almacenar las campañas
   const queryClient = useQueryClient();
 
   const handleClickOpen = (id: string) => {
-    setSelectedUserId(id); // Establece el ID del usuario seleccionado
+    setSelectedUserId(id);
     setOpenEdit(true);
   };
 
@@ -77,11 +81,46 @@ export default function DocumentsTable() {
     </IconButton>
   );
 
+  // Obtén los documentos usando react-query
   const { data, isLoading, isError } = useQuery({
     queryKey: ["documents"],
-    queryFn: () => getDocuments(),
+    queryFn: getDocuments,
     retry: false,
   });
+
+  // Usa useEffect para cargar los nombres de las secciones y campañas
+  useEffect(() => {
+    const fetchSectionAndCampaignNames = async () => {
+      if (data) {
+        const sectionsMap = {};
+        const campaignsMap = {};
+        for (const document of data) {
+          if (document.section && !sectionsMap[document.section]) {
+            try {
+              const section = await getSectionById(document.section);
+              sectionsMap[document.section] = section ? section.name : "Default Section Name";
+            } catch (error) {
+              console.error("Error fetching section:", error);
+              sectionsMap[document.section] = "Error loading section";
+            }
+          }
+
+          if (document.campaign && !campaignsMap[document.campaign]) {
+            try {
+              const campaign = await getCampaignById(document.campaign);
+              campaignsMap[document.campaign] = campaign ? campaign.name : "Default Campaign Name";
+            } catch (error) {
+              console.error("Error fetching campaign:", error);
+              campaignsMap[document.campaign] = "Error loading campaign";
+            }
+          }
+        }
+        setSections(sectionsMap);
+        setCampaigns(campaignsMap);
+      }
+    };
+    fetchSectionAndCampaignNames();
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -90,7 +129,9 @@ export default function DocumentsTable() {
       </Typography>
     );
   }
+
   if (isError) return <Navigate to={"/404"} />;
+
   if (data) {
     return (
       <div className={"p-4"}>
@@ -100,14 +141,14 @@ export default function DocumentsTable() {
               <TableRow>
                 <StyledTableCell align="right">Título</StyledTableCell>
                 <StyledTableCell align="right">Descripción</StyledTableCell>
-                <StyledTableCell align="right">
-                  Fecha de creación
-                </StyledTableCell>
+                <StyledTableCell align="right">Sección</StyledTableCell>
+                <StyledTableCell align="right">Campaña</StyledTableCell> {/* Nueva columna para la campaña */}
+                <StyledTableCell align="right">Fecha de creación</StyledTableCell>
                 <StyledTableCell align="right">Acciones</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data?.map((document) => (
+              {data.map((document) => (
                 <StyledTableRow key={document._id}>
                   <StyledTableCell component="th" scope="row">
                     {document.title}
@@ -116,7 +157,13 @@ export default function DocumentsTable() {
                     {document.description}
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    {document.createdAt}
+                    {sections[document.section] || "Loading..."}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {campaigns[document.campaign] || "Loading..."} {/* Muestra el nombre de la campaña */}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {formatDate(document.createdAt)}
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <IconButton

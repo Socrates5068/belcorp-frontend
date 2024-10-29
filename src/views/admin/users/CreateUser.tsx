@@ -6,7 +6,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { UserRegistrationFormEnhanced, userRoles } from "@/types/index";
+import {
+  userPermissions,
+  UserRegistrationFormEnhanced,
+  userRoles,
+} from "@/types/index";
 import { useForm } from "react-hook-form";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -175,6 +179,31 @@ const CreateUser: React.FC<CreateUserProps> = ({
                 </Select>
                 {errors.section && (
                   <FormHelperText>{errors.section?.message}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            {/* Campo para permisos */}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth required error={!!errors.permissions}>
+                <InputLabel id="roles">Permisos</InputLabel>
+                <Select
+                  labelId="permisos"
+                  label="Permisos"
+                  multiple
+                  {...register("permissions", {
+                    required: "Al menos un rol es obligatorio",
+                  })}
+                  defaultValue={[]}
+                  renderValue={(selected) => (selected as string[]).join(", ")}
+                >
+                  {Object.values(userPermissions).map((permission) => (
+                    <MenuItem key={permission} value={permission}>
+                      {permission}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {errors.permissions && (
+                  <FormHelperText>{errors.permissions.message}</FormHelperText>
                 )}
               </FormControl>
             </Grid>
