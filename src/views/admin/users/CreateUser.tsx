@@ -18,7 +18,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormHelperText from "@mui/material/FormHelperText";
 import { useSections } from "@/hooks/sections";
-import { isGerente, useAuth } from "@/hooks/useAuth";
+import { isAdmin, isGerente, useAuth } from "@/hooks/useAuth";
 
 interface CreateUserProps {
   open: boolean;
@@ -183,6 +183,7 @@ const CreateUser: React.FC<CreateUserProps> = ({
               </FormControl>
             </Grid>
             {/* Campo para permisos */}
+            {user && isAdmin(user.roles) &&
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth required error={!!errors.permissions}>
                 <InputLabel id="roles">Permisos</InputLabel>
@@ -207,6 +208,7 @@ const CreateUser: React.FC<CreateUserProps> = ({
                 )}
               </FormControl>
             </Grid>
+            }
           </Grid>
         </form>
       </DialogContent>
