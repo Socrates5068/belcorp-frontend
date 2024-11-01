@@ -10,7 +10,7 @@ const NAVIGATION: Navigation = [
   },
   {
     segment: "documents",
-    title: "Consultoras",
+    title: "Documentos",
     icon: <CampaignIcon />
   },
   {
