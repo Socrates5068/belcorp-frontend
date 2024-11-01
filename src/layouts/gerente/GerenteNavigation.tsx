@@ -24,6 +24,21 @@ const NAVIGATION: Navigation = [
     title: "Campañas",
     icon: <DescriptionIcon />,
   },
+  {
+    segment: "conferences",
+    title: "Conferencias",
+    icon: <DescriptionIcon />,
+  },
+  {
+    segment: "fragances",
+    title: "Fragancias",
+    icon: <DescriptionIcon />,
+  },  
+  {
+    segment: "reports",
+    title: "Reportes",
+    icon: <DescriptionIcon />,
+  },  
 ];
 
 export default function GerenteNavigation() {

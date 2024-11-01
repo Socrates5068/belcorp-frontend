@@ -14,7 +14,7 @@ export const userRoles = {
   consultora: "Consultora",
 };
 
-export const userPermissions =  {
+export const userPermissions = {
   CreateUser: "CreateUser",
   EditUser: "EditUser",
   EditCampaign: "EditCampaign",
@@ -22,7 +22,7 @@ export const userPermissions =  {
   CreateDocument: "CreateDocument",
   EditDocument: "EditDocument",
   DeleteDocument: "DeleteDocument",
-}
+};
 
 export const userStatusEnum = z.nativeEnum(userStatus);
 export const userRolesEnum = z.nativeEnum(userRoles);
@@ -65,12 +65,32 @@ export type ConfirmToken = Pick<Auth, "token">;
 export type CheckPasswordForm = Pick<Auth, "password">;
 
 export const isAdminSchema = z.object({
+  _id: z.string(),
   name: z.string(),
   email: z.string(),
   roles: z.array(z.string()),
   permissions: z.array(z.string()),
   section: z.string(),
 });
+
+/** Conferences */
+export const conferenceSchema = z.object({
+  name: z.string(),
+  date: z.string(),
+  _id: z.string(),
+});
+
+export const conferences = z.array(conferenceSchema);
+export const editConference = conferenceSchema.pick({
+  name: true,
+  date: true,
+});
+type Conference = z.infer<typeof conferenceSchema>;
+export type UpdateConferenceForm = Pick<Conference, "name" | "date"> & {
+  _id: string | null;
+};
+
+export type ConferenceRegistrationForm = Pick<Conference, "name" | "date">;
 
 /** Sections */
 export const sectionSchema = z.object({
@@ -119,6 +139,72 @@ export type DocumentRegistrationForm = Pick<
   "title" | "description" | "file" | "campaign" | "section"
 >;
 
+/** Fragances */
+export const fraganceSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  imageUrl: z.string(),
+  _id: z.string(),
+});
+
+const createFragance = fraganceSchema.extend({
+  file: z.instanceof(File),
+});
+
+export const fragances = z.array(fraganceSchema);
+export const editFragance = fraganceSchema.pick({
+  name: true,
+  description: true,
+  imageUrl: true,
+});
+type Fragance = z.infer<typeof createFragance>;
+export type UpdateFraganceForm = Pick<
+  Fragance,
+  "name" | "description" | "file"
+> & {
+  _id: string | null;
+};
+
+export type FraganceRegistrationForm = Pick<
+  Fragance,
+  "name" | "description" | "file"
+>;
+
+/** Reports */
+export const reportSchema = z.object({
+  name: z.string(),
+  creationDate: z.string(),
+  reportType: z.string(),
+  userId: z.string(),
+  fileUrl: z.string(),
+  _id: z.string(),
+});
+
+const createReport = reportSchema.extend({
+  file: z.instanceof(File),
+});
+
+export const reports = z.array(reportSchema);
+export const editReport = reportSchema.pick({
+  name: true,
+  creationDate: true,
+  reportType: true,
+  userId: true,
+  fileUrl: true,
+});
+type Report = z.infer<typeof createReport>;
+export type UpdateReportForm = Pick<
+  Report,
+  "name" | "creationDate" | "reportType" | "userId" | "file"
+> & {
+  _id: string | null;
+};
+
+export type ReportRegistrationForm = Pick<
+Report,
+  "name" | "creationDate" | "reportType" | "userId" | "file"
+>;
+
 /* Campaigns */
 const campaignSchema = z.object({
   _id: z.string(),
@@ -145,7 +231,10 @@ export type CampaignRegistrationForm = Pick<
   Campaign,
   "name" | "startDate" | "endDate"
 >;
-export type UpdateCampaignForm = Pick<Campaign, "name" | "startDate" | "endDate"> & {
+export type UpdateCampaignForm = Pick<
+  Campaign,
+  "name" | "startDate" | "endDate"
+> & {
   _id: string | null;
 };
 

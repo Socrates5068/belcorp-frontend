@@ -1,30 +1,28 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-import { UpdateCampaignForm, UpdateSectionForm } from "@/types/index";
+import { UpdateFraganceForm } from "@/types/index";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { updateSection } from "@/api/SectionAPI";
 import Grid2 from "@mui/material/Grid2";
-import { useCampaigns } from "@/hooks/campaigns";
 import CardActionArea from "@mui/material/CardActionArea";
-import { formatDate } from "@/utils/utils";
-import { CardHeader } from "@mui/material";
-import EditCampaign from "./EditCampaign";
-import { updateCampaign } from "@/api/CampaignAPI";
+import { CardHeader, CardMedia } from "@mui/material";
 import { isGerente, useAuth } from "@/hooks/useAuth";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-interface CampaignsTableProps {
-  navigate: (changedData: string) => void; // Ajusta 'any' según sea necesario
-}
+import {
+  deleteFraganceById,
+  getFragances,
+  updateFragance,
+} from "@/api/FragancesAPI";
+import EditFragance from "./EditFragance";
 
-export default function CampaignsTable({
-  navigate,
-}: Readonly<CampaignsTableProps>) {
+export default function FragancesTable() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
     null
@@ -42,19 +40,40 @@ export default function CampaignsTable({
   };
 
   const { mutate: mutateEdit } = useMutation({
-    mutationFn: updateCampaign,
+    mutationFn: updateFragance,
     onError: (error) => {
       toast.error(error.message);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Actualizado");
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["fragances"] });
     },
   });
 
-  const handleEdit = (data: UpdateCampaignForm) => mutateEdit(data);
+  const {
+    data: fragances,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["fragances"],
+    queryFn: () => getFragances(),
+    retry: false,
+  });
 
-  const { data: campaigns, isError, isLoading } = useCampaigns();
+  const handleEdit = (data: UpdateFraganceForm) => mutateEdit(data);
+
+  const { mutate: mutateDelete } = useMutation({
+    mutationFn: deleteFraganceById,
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    onSuccess: () => {
+      toast.success("Eliminado");
+      queryClient.invalidateQueries({ queryKey: ["fragances"] });
+    },
+  });
+
+  const handleDelete = (id: string) => mutateDelete(id);
 
   const { data: user } = useAuth();
 
@@ -66,7 +85,7 @@ export default function CampaignsTable({
     );
   }
   if (isError) return <Navigate to={"/404"} />;
-  if (campaigns) {
+  if (fragances) {
     return (
       <div className={"p-4"}>
         <Grid2
@@ -74,43 +93,38 @@ export default function CampaignsTable({
           spacing={{ xs: 2, md: 3 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {campaigns?.map((campaign, index) => (
+          {fragances?.map((fragance, index) => (
             <Grid2 size={{ xs: 2, sm: 4, md: 3 }} key={index}>
-              <Card
-                sx={{ maxWidth: 345 }}
-                onClick={() => {
-                  navigate(`/campaigns/${index + 1}`);
-                }}
-              >
+              <Card sx={{ maxWidth: 400 }}>
                 <CardHeader
-                  title={campaign.name}
-                  /* subheader="September 14, 2016" */
+                  action={
+                    user && isGerente(user?.roles) ? (
+                      <IconButton
+                        aria-label="delete"
+                        onClick={() => handleDelete(fragance._id)} // Define this function to handle deletion
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    ) : null
+                  }
+                  title={fragance.name}
                 />
-                <CardActionArea>
-                  {/* <CardMedia
+                <CardActionArea sx={{ height: 350 }}>
+                  <CardMedia
+                    sx={{ height: 250 }}
                     component="img"
-                    height="140"
-                    image="/reptile.jpg"
-                    alt="green iguana"
-                  /> */}
+                    image={`http://localhost:4000/uploads/images/${fragance.imageUrl}`}
+                    alt={fragance.name}
+                  />
                   <CardContent>
                     <Typography gutterBottom variant="h6" component="div">
-                      Fecha inicio
+                      Descripción
                     </Typography>
                     <Typography
                       variant="body2"
                       sx={{ color: "text.secondary" }}
                     >
-                      {formatDate(campaign.startDate)}
-                    </Typography>
-                    <Typography gutterBottom variant="h6" component="div">
-                      Fecha fin
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {formatDate(campaign.endDate)}
+                      {fragance.description}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -119,30 +133,28 @@ export default function CampaignsTable({
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => handleClickOpen(campaign._id)}
+                      onClick={() => handleClickOpen(fragance._id)}
                     >
                       Editar
                     </Button>
                   </CardActions>
-                ) : (
-                  ""
-                )}
+                ) : null}
               </Card>
             </Grid2>
           ))}
         </Grid2>
-        <EditCampaign
+        <EditFragance
           open={openEdit}
           handleClose={handleClose}
           handleEdit={handleEdit}
-          userId={selectedCampaignId}
+          fraganceId={selectedCampaignId}
         />
       </div>
     );
   } else {
     return (
       <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-        No hay Campañas registradas
+        No hay Conferencias registradas
       </Typography>
     );
   }

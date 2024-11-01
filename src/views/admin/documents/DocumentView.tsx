@@ -10,7 +10,7 @@ import CreateDocument from "./CreateDocument";
 import DocumentsTable from "./DocumentsTable";
 import { createDocument } from "@/api/DocumentAPI";
 
-export default function SectionView() {
+export default function DocumentView() {
   const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
 

@@ -9,8 +9,13 @@ const NAVIGATION: Navigation = [
     pattern: 'campaigns{/:campaignId}*',
   },
   {
-    segment: "users",
+    segment: "documents",
     title: "Consultoras",
+    icon: <CampaignIcon />
+  },
+  {
+    segment: "reports",
+    title: "Reportes",
     icon: <CampaignIcon />
   },
 ];

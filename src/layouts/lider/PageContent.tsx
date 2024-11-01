@@ -1,9 +1,8 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import CampaignsView from "@/views/admin/campaigns/CampaignsView";
 import CampaigResouces from "@/views/admin/campaigns/CampaigResouces";
-import UserView from "@/views/admin/consultoras/UserView";
+import ReportsView from "@/views/admin/reports/ReportsView";
 
 interface PageContentProps {
   pathname: string;
@@ -22,26 +21,16 @@ export function PageContent({
   return (
     <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: "#eaeff1" }}>
       {pathname == "/campaigns" ? (
-        <>
-          <Typography variant="h5" gutterBottom>
-          </Typography>
           <CampaignsView navigate={handleDataFromChild} />
-        </>
       ) : null}
       {/^\/campaigns\/([^/]+)$/.exec(pathname) ? (
-        <>
-          <Typography variant="h5" gutterBottom>
-            {pathname.replace("/", "").toUpperCase()}
-          </Typography>
           <CampaigResouces />
-        </>
       ) : null}
-      {pathname == "/users" ? (
-        <>
-          <Typography variant="h5" gutterBottom>
-          </Typography>
-          <UserView />
-        </>
+      {pathname == "/documents" ? (
+          <CampaigResouces />
+      ) : null}
+      {pathname == "/reports" ? (
+          <ReportsView />
       ) : null}
     </Box>
   );

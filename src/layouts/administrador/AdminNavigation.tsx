@@ -7,6 +7,11 @@ const NAVIGATION: Navigation = [
     title: "Usuarios",
     icon: <PeopleAltIcon />,
   },
+  {
+    segment: "reports",
+    title: "Reportes",
+    icon: <PeopleAltIcon />,
+  },
 ];
 
 export default function AdminNavigation() {

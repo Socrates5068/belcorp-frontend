@@ -8,9 +8,13 @@ import { PageContent } from "./gerente/PageContent";
 import { Navigate } from "react-router-dom";
 import { isGerente, useAuth } from "@/hooks/useAuth";
 import AdminNavigation from "./gerente/GerenteNavigation";
-import type { Session } from "@toolpad/core";
+import { PageContainer, PageContainerToolbar, type Session } from "@toolpad/core";
 import { useQueryClient } from "@tanstack/react-query";
 import NavigateButton from "@/components/buttonBack";
+
+function PageToolbar() {
+  return <PageContainerToolbar></PageContainerToolbar>;
+}
 
 export default function GerenteLayout() {
   const [pathname, setPathname] = React.useState("/usuarios");
@@ -86,6 +90,12 @@ export default function GerenteLayout() {
       >
         <AppTheme>
           <DashboardLayout slots={{ toolbarActions: NavigateButton }}>
+          <PageContainer
+              slots={{
+                toolbar: PageToolbar,
+              }}
+              pathname={pathname}
+            />
             <PageContent pathname={pathname} />
           </DashboardLayout>
         </AppTheme>

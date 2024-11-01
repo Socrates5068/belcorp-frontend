@@ -1,30 +1,22 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Navigate } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-import { UpdateCampaignForm, UpdateSectionForm } from "@/types/index";
+import { UpdateConferenceForm } from "@/types/index";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { updateSection } from "@/api/SectionAPI";
 import Grid2 from "@mui/material/Grid2";
-import { useCampaigns } from "@/hooks/campaigns";
 import CardActionArea from "@mui/material/CardActionArea";
 import { formatDate } from "@/utils/utils";
 import { CardHeader } from "@mui/material";
-import EditCampaign from "./EditCampaign";
-import { updateCampaign } from "@/api/CampaignAPI";
+import EditCampaign from "./EditConference";
 import { isGerente, useAuth } from "@/hooks/useAuth";
+import { getConferences, updateConference } from "@/api/ConferencesAPI";
 
-interface CampaignsTableProps {
-  navigate: (changedData: string) => void; // Ajusta 'any' según sea necesario
-}
-
-export default function CampaignsTable({
-  navigate,
-}: Readonly<CampaignsTableProps>) {
+export default function ConferencesTable() {
   const [openEdit, setOpenEdit] = React.useState(false);
   const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(
     null
@@ -42,19 +34,27 @@ export default function CampaignsTable({
   };
 
   const { mutate: mutateEdit } = useMutation({
-    mutationFn: updateCampaign,
+    mutationFn: updateConference,
     onError: (error) => {
       toast.error(error.message);
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Actualizado");
-      queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+      queryClient.invalidateQueries({ queryKey: ["conferences"] });
     },
   });
 
-  const handleEdit = (data: UpdateCampaignForm) => mutateEdit(data);
+  const {
+    data: conferences,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["conferences"],
+    queryFn: () => getConferences(),
+    retry: false,
+  });
 
-  const { data: campaigns, isError, isLoading } = useCampaigns();
+  const handleEdit = (data: UpdateConferenceForm) => mutateEdit(data);
 
   const { data: user } = useAuth();
 
@@ -66,7 +66,7 @@ export default function CampaignsTable({
     );
   }
   if (isError) return <Navigate to={"/404"} />;
-  if (campaigns) {
+  if (conferences) {
     return (
       <div className={"p-4"}>
         <Grid2
@@ -74,16 +74,11 @@ export default function CampaignsTable({
           spacing={{ xs: 2, md: 3 }}
           columns={{ xs: 4, sm: 8, md: 12 }}
         >
-          {campaigns?.map((campaign, index) => (
+          {conferences?.map((conference, index) => (
             <Grid2 size={{ xs: 2, sm: 4, md: 3 }} key={index}>
-              <Card
-                sx={{ maxWidth: 345 }}
-                onClick={() => {
-                  navigate(`/campaigns/${index + 1}`);
-                }}
-              >
+              <Card sx={{ maxWidth: 345 }}>
                 <CardHeader
-                  title={campaign.name}
+                  title={conference.name}
                   /* subheader="September 14, 2016" */
                 />
                 <CardActionArea>
@@ -95,22 +90,13 @@ export default function CampaignsTable({
                   /> */}
                   <CardContent>
                     <Typography gutterBottom variant="h6" component="div">
-                      Fecha inicio
+                      Fecha
                     </Typography>
                     <Typography
                       variant="body2"
                       sx={{ color: "text.secondary" }}
                     >
-                      {formatDate(campaign.startDate)}
-                    </Typography>
-                    <Typography gutterBottom variant="h6" component="div">
-                      Fecha fin
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {formatDate(campaign.endDate)}
+                      {formatDate(conference.date)}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -119,7 +105,7 @@ export default function CampaignsTable({
                     <Button
                       size="small"
                       color="primary"
-                      onClick={() => handleClickOpen(campaign._id)}
+                      onClick={() => handleClickOpen(conference._id)}
                     >
                       Editar
                     </Button>
@@ -142,7 +128,7 @@ export default function CampaignsTable({
   } else {
     return (
       <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-        No hay Campañas registradas
+        No hay Conferencias registradas
       </Typography>
     );
   }

@@ -5,75 +5,47 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { ConferenceRegistrationForm } from "@/types/index";
 import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
-import { UpdateSectionForm } from "@/types/index";
 import Grid2 from "@mui/material/Grid2";
-import { getSectionById } from "@/api/SectionAPI";
 
-interface EditSectionProps {
-  openEdit: boolean;
+interface CreateConferencesProps {
+  open: boolean;
   handleClose: () => void;
-  handleEdit: (data: UpdateSectionForm) => void;
-  userId: string | null; // Ahora puede ser string o null
+  handleRegister: (data: ConferenceRegistrationForm) => void;
 }
 
-const EditSection: React.FC<EditSectionProps> = ({
-  openEdit,
+const CreateConferences: React.FC<CreateConferencesProps> = ({
+  open,
   handleClose,
-  handleEdit,
-  userId,
+  handleRegister,
 }) => {
-  const {
-    data: section,
-    isError,
-    isLoading,
-  } = useQuery({
-    queryKey: ["editSection", userId],
-    queryFn: () => getSectionById(userId),
-    enabled: !!userId && openEdit, // Ejecuta la consulta solo si userId es válido y el diálogo está abierto
-    retry: false,
-  });
-
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<UpdateSectionForm>();
+  } = useForm<ConferenceRegistrationForm>();
 
-  // Usamos useEffect para establecer los valores del formulario cuando se cargue el usuario
-  React.useEffect(() => {
-    if (section && openEdit) {
-      reset({
-        name: section.name,
-      });
-    }
-  }, [section, openEdit, reset]);
-
-  const onSubmit = (data: UpdateSectionForm) => {
-    handleEdit({ ...data, _id: userId });
+  const onSubmit = (data: ConferenceRegistrationForm) => {
+    handleRegister(data);
     reset();
     handleClose(); // Cerrar el modal después de enviar
   };
 
   // Función para manejar el cierre y resetear el formulario
   const handleCancel = () => {
-    handleClose();
     reset(); // Resetear el formulario a los valores iniciales o a vacío
+    handleClose();
   };
-
-  if (isLoading) return null; // Puedes mostrar un indicador de carga si lo deseas
-
-  if (isError) return "Error al cargar los datos del usuario.";
 
   return (
     <Dialog
-      open={openEdit}
+      open={open}
       onClose={handleCancel}
       aria-labelledby="form-dialog-title"
     >
-      <DialogTitle id="form-dialog-title">Registrar Sección</DialogTitle>
+      <DialogTitle id="form-dialog-title">Registrar Conferencia</DialogTitle>
       <DialogContent sx={{ width: 484 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Grid2 container spacing={2} size={12}>
@@ -91,6 +63,23 @@ const EditSection: React.FC<EditSectionProps> = ({
                 helperText={errors.name?.message}
               />
             </Grid2>
+            {/* Campo de Fecha de Inicio */}
+            <Grid2 size={12}>
+              <TextField
+                required
+                fullWidth
+                type="date"
+                label="Fecha"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                {...register("date", {
+                  required: "La fecha de inicio es obligatoria",
+                })}
+                error={!!errors.date}
+                helperText={errors.date?.message}
+              />
+            </Grid2>
           </Grid2>
         </form>
       </DialogContent>
@@ -99,11 +88,11 @@ const EditSection: React.FC<EditSectionProps> = ({
           Cancelar
         </Button>
         <Button type="submit" onClick={handleSubmit(onSubmit)} color="primary">
-          Actualizar
+          Registrar
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default EditSection;
+export default CreateConferences;
