@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import Grid2 from "@mui/material/Grid2";
 import CardActionArea from "@mui/material/CardActionArea";
 import { formatDate } from "@/utils/utils";
-import { CardHeader } from "@mui/material";
+import { CardHeader, styled } from "@mui/material";
 import EditCampaign from "./EditConference";
 import { isGerente, useAuth } from "@/hooks/useAuth";
 import { getConferences, updateConference } from "@/api/ConferencesAPI";
@@ -66,7 +66,7 @@ export default function ConferencesTable() {
     );
   }
   if (isError) return <Navigate to={"/404"} />;
-  if (conferences) {
+  if (Array.isArray(conferences) && conferences.length > 0) {
     return (
       <div className={"p-4"}>
         <Grid2
@@ -126,10 +126,15 @@ export default function ConferencesTable() {
       </div>
     );
   } else {
-    return (
-      <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-        No hay Conferencias registradas
-      </Typography>
-    );
+    const Div = styled("div")(({ theme }) => ({
+      ...theme.typography.button,
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(1),
+      display: "flex", // Usar flexbox para alinear el contenido
+      justifyContent: "center", // Centra horizontalmente
+      alignItems: "center", // Centra verticalmente
+    }));
+
+    return <Div>{"No hay Fragancias registradas"}</Div>;
   }
 }

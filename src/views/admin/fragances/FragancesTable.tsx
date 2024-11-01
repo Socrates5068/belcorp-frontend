@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import Grid2 from "@mui/material/Grid2";
 import CardActionArea from "@mui/material/CardActionArea";
-import { CardHeader, CardMedia } from "@mui/material";
+import { CardHeader, CardMedia, styled } from "@mui/material";
 import { isGerente, useAuth } from "@/hooks/useAuth";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -85,7 +85,7 @@ export default function FragancesTable() {
     );
   }
   if (isError) return <Navigate to={"/404"} />;
-  if (fragances) {
+  if (Array.isArray(fragances) && fragances.length > 0) {
     return (
       <div className={"p-4"}>
         <Grid2
@@ -152,10 +152,15 @@ export default function FragancesTable() {
       </div>
     );
   } else {
-    return (
-      <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-        No hay Conferencias registradas
-      </Typography>
-    );
+    const Div = styled("div")(({ theme }) => ({
+      ...theme.typography.button,
+      backgroundColor: theme.palette.background.paper,
+      padding: theme.spacing(1),
+      display: "flex", // Usar flexbox para alinear el contenido
+      justifyContent: "center", // Centra horizontalmente
+      alignItems: "center", // Centra verticalmente
+    }));
+
+    return <Div>{"No hay Fragancias registradas"}</Div>;
   }
 }
