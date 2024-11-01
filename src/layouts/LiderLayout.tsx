@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import AppTheme from "./lider/LiderTheme";
 import "react-toastify/dist/ReactToastify.css";
 import { PageContent } from "./lider/PageContent";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { isSocia, useAuth } from "@/hooks/useAuth";
 import {
   PageContainer,
@@ -53,24 +53,29 @@ export default function LiderLayout() {
     queryClient.invalidateQueries({ queryKey: ["role"] });
   }, [queryClient]);
 
+  const navigateLogin = useNavigate();
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
-        setSession({
-          user: {
-            name: user?.name,
-            email: user?.email,
-            image: "",
-          },
-        });
+        if (user) {
+          setSession({
+            user: {
+              name: user.name,
+              email: user.email,
+              image: "",
+            },
+          });
+        } else {
+          console.error('Unable to sign in: user data is unavailable.');
+        }
       },
       signOut: () => {
         setSession(null);
         logout();
-        navigate(`/login`);
+        navigateLogin('/auth/login');
       },
     };
-  }, [logout, navigate]);
+  }, [logout, navigateLogin, user]);
 
   if (isLoading) return "Cargando...";
 

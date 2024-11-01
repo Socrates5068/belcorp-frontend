@@ -15,7 +15,7 @@ const NAVIGATION: Navigation = [
   },
   {
     segment: "reports",
-    title: "Reportes",
+    title: "Mis Reportes",
     icon: <CampaignIcon />
   },
 ];

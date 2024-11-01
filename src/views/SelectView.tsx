@@ -2,6 +2,7 @@ import { Button, Card, CardContent, Grid2, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 
 const SelectView = () => {
   const navigate = useNavigate();
@@ -10,6 +11,8 @@ const SelectView = () => {
   const handleRedirect = (module: string) => {
     navigate(`/${module}`);
   };
+
+  const { data: user, isError, isLoading } = useAuth();
 
   const queryClient = useQueryClient();
   

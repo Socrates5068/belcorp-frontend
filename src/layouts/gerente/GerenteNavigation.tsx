@@ -36,7 +36,7 @@ const NAVIGATION: Navigation = [
   },  
   {
     segment: "reports",
-    title: "Reportes",
+    title: "Reportes de consultoras",
     icon: <DescriptionIcon />,
   },  
 ];

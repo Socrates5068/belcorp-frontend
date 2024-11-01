@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import AppTheme from "./gerente/AdminTheme";
 import "react-toastify/dist/ReactToastify.css";
 import { PageContent } from "./gerente/PageContent";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { isGerente, useAuth } from "@/hooks/useAuth";
 import AdminNavigation from "./gerente/GerenteNavigation";
 import { PageContainer, PageContainerToolbar, type Session } from "@toolpad/core";
@@ -34,10 +34,11 @@ export default function GerenteLayout() {
   const navigation = AdminNavigation();
 
   const { data: user, isError, isLoading } = useAuth();
+
   const [session, setSession] = React.useState<Session | null>({
     user: {
-      name: user?.name,
-      email: user?.email,
+      name: user?.roles[0],
+      email: "email",
       image: "",
     },
   });
@@ -48,24 +49,29 @@ export default function GerenteLayout() {
     queryClient.invalidateQueries({ queryKey: ["role"] });
   }, [queryClient]);
 
+  const navigateLogin = useNavigate();
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
-        setSession({
-          user: {
-            name: user?.name,
-            email: user?.email,
-            image: "",
-          },
-        });
+        if (user) {
+          setSession({
+            user: {
+              name: user.name,
+              email: user.email,
+              image: "",
+            },
+          });
+        } else {
+          console.error('Unable to sign in: user data is unavailable.');
+        }
       },
       signOut: () => {
         setSession(null);
         logout();
-        navigate(`/login`);
+        navigateLogin('/auth/login');
       },
     };
-  }, [logout, navigate]);
+  }, [logout, navigateLogin, user]);
 
   if (isLoading) return "Cargando...";
 

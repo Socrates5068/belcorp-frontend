@@ -135,6 +135,6 @@ export default function ConferencesTable() {
       alignItems: "center", // Centra verticalmente
     }));
 
-    return <Div>{"No hay Fragancias registradas"}</Div>;
+    return <Div>{"No hay Conferencias registradas"}</Div>;
   }
 }

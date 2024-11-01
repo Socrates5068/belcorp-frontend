@@ -4,7 +4,7 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { ToastContainer } from "react-toastify";
 import AppTheme from "./lider/LiderTheme";
 import "react-toastify/dist/ReactToastify.css";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { isConsultora, useAuth } from "@/hooks/useAuth";
 import {
   PageContainer,
@@ -41,8 +41,8 @@ export default function ConsultoraLayout() {
 
   const [session, setSession] = React.useState<Session | null>({
     user: {
-      name: user?.name,
-      email: user?.email,
+      name: user?.roles[0],
+      email: "email",
       image: "",
     },
   });
@@ -53,24 +53,29 @@ export default function ConsultoraLayout() {
     queryClient.invalidateQueries({ queryKey: ["role"] });
   }, [queryClient]);
 
+  const navigateLogin = useNavigate();
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
-        setSession({
-          user: {
-            name: user?.name,
-            email: user?.email,
-            image: "",
-          },
-        });
+        if (user) {
+          setSession({
+            user: {
+              name: user.name,
+              email: user.email,
+              image: "",
+            },
+          });
+        } else {
+          console.error('Unable to sign in: user data is unavailable.');
+        }
       },
       signOut: () => {
         setSession(null);
         logout();
-        navigate(`/login`);
+        navigateLogin('/auth/login');
       },
     };
-  }, [logout, navigate, user?.email, user?.name]);
+  }, [logout, navigateLogin, user]);
 
   if (isLoading) return "Cargando...";
 
